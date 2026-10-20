@@ -529,6 +529,26 @@ input, select { outline: none; }
 }
 .detail-actions button.primary { background: var(--green); color: #fff; font-weight: 600; box-shadow: 0 4px 12px rgba(31, 122, 61, .22); }
 
+/* 开单预览 */
+.bill-preview {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  min-height: 180px;
+  margin: 2px auto 0;
+  border-radius: 14px;
+  background: #f4f6f5;
+  box-shadow: 0 8px 26px rgba(18, 48, 32, .16);
+}
+.bill-hint {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin: 12px 0 4px;
+  line-height: 1.8;
+}
+.bill-hint b { color: var(--green); }
+
 .kv { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
 .kv:last-child { border-bottom: none; }
 .kv span { color: var(--muted); }
@@ -739,7 +759,7 @@ input, select { outline: none; }
   function emptyDB() {
     return {
       version: 1,
-      settings: { shopName: '我的水果批发', owner: '', phone: '' },
+      settings: { shopName: '我的水果批发', owner: '', phone: '', address: '', qr: '' },
       customers: [],
       suppliers: [],
       products: [],
@@ -1174,6 +1194,7 @@ input, select { outline: none; }
     db.settings.shopName = '老张水果批发';
     db.settings.owner = '张老板';
     db.settings.phone = '13800000000';
+    db.settings.address = '簊子台街道中原农贸批发大市场 A12 号';
 
     function c(name, phone, opening) {
       var p = { id: uid(), name: name, phone: phone || '', note: '', opening: opening || 0, createdAt: Date.now() };
@@ -1979,7 +2000,8 @@ input, select { outline: none; }
     body += '</div>';
 
     var foot = (rec ? '<button class="btn-ghost sq danger" data-act="del-record" data-id="' + rec.id + '">' + icon('trash') + '</button>' : '') +
-      '<button class="btn-primary" data-act="save-entry" data-type="' + type + '" data-id="' + (rec ? rec.id : '') + '">保存</button>';
+      '<button class="btn-ghost" data-act="save-entry" data-type="' + type + '" data-id="' + (rec ? rec.id : '') + '" style="flex:1">保存</button>' +
+      '<button class="btn-primary" data-act="save-entry" data-bill="1" data-type="' + type + '" data-id="' + (rec ? rec.id : '') + '" style="flex:1.25">保存并开单</button>';
 
     var title = (rec ? '编辑' : '记一笔') + (isSale ? '卖货' : '进货');
     openSheet({
@@ -2069,10 +2091,10 @@ input, select { outline: none; }
     db.products.push({ id: S.uid(), name: it.name, unit: it.unit, price: it.price || 0, lastUsedAt: Date.now() });
   }
 
-  function saveEntry(type, editId) {
+  function saveEntry(type, editId, wantBill) {
     var payload = readEntryForm();
-    if (!payload.items.length) { toast('请先填写水果名和数量'); return; }
-    if (payload.total <= 0) { toast('金额是 0，检查一下数量和单价'); return; }
+    if (!payload.items.length) { toast('请先填写水果名和数量'); return null; }
+    if (payload.total <= 0) { toast('金额是 0，检查一下数量和单价'); return null; }
 
     var isSale = type === 'sale';
     var party = resolveParty(isSale ? 'customer' : 'supplier', payload.partyName);
@@ -2103,6 +2125,11 @@ input, select { outline: none; }
     commit();
     closeSheet();
     toast((editId ? '已修改 ' : '已记上 ') + money(payload.total) + (payload.total - payload.paid > 0.004 ? '，欠 ' + money(payload.total - payload.paid) : ''));
+    if (wantBill) {
+      var rid = rec.id;
+      setTimeout(function () { openBill(rid); }, 180);
+    }
+    return rec.id;
   }
 
   /* ================= 收款 / 付款 ================= */
@@ -2245,6 +2272,12 @@ input, select { outline: none; }
       money(r.type === 'sale' || r.type === 'purchase' ? r.total : r.amount) + '</div>' +
       (r.partyName ? '<div class="dh-sub">' + esc(r.partyName) + '</div>' : '') +
       '</div>';
+
+    if (r.type === 'sale' || r.type === 'purchase') {
+      body += '<div class="detail-actions" style="grid-template-columns:1fr">' +
+        '<button class="primary" data-act="open-bill" data-id="' + r.id + '">开单 · 分享给' + (r.type === 'sale' ? '客户' : '供货商') + '</button>' +
+        '</div>';
+    }
 
     body += '<div class="card">';
     if (r.type === 'sale' || r.type === 'purchase') {
@@ -2483,14 +2516,381 @@ input, select { outline: none; }
     setTimeout(function () { window.print(); }, 60);
   }
 
+  /* ================= 开单：生成账单图片，分享到微信 ================= */
+
+  function setFont(ctx, size, weight) {
+    ctx.font = (weight || 'normal') + ' ' + size + 'px "PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif';
+  }
+
+  function billText(rec) {
+    var isSale = rec.type === 'sale';
+    var lines = [];
+    lines.push('【' + (isSale ? '销售单' : '进货单') + '】' + (db.settings.shopName || ''));
+    lines.push((isSale ? '客户' : '供货商') + '：' + (rec.partyName || '散客'));
+    lines.push('日期：' + rec.date);
+    lines.push('');
+    (rec.items || []).forEach(function (it) {
+      lines.push(it.name + '  ' + S.fmtNum(it.qty) + it.unit + ' × ' + S.fmtNum(it.price) + ' = ' + S.fmtNum(it.amount));
+    });
+    lines.push('');
+    lines.push('合计：' + S.fmtNum(rec.total) + ' 元');
+    lines.push((isSale ? '已收：' : '已付：') + S.fmtNum(rec.paid) + ' 元');
+    var debt = S.round2(rec.total - rec.paid);
+    if (debt > 0.004) lines.push((isSale ? '还欠：' : '还欠对方：') + S.fmtNum(debt) + ' 元');
+    if (db.settings.phone) lines.push('联系电话：' + db.settings.phone);
+    lines.push('—— 账单由「' + (db.settings.shopName || '水果记账本') + '」开出');
+    return lines.join('\n');
+  }
+
+  /** 把一笔单子画成一张竖版账单图（微信里看得清） */
+  /** 收银单号：20 位数字，看起来像正规小票 */
+  function billNo(rec) {
+    var d = String(rec.date).replace(/-/g, '');
+    var id = String(rec.id);
+    var seed = 0;
+    for (var i = 0; i < id.length; i++) seed = (seed * 31 + id.charCodeAt(i)) % 10000000000;
+    return '88' + d + ('0000000000' + seed).slice(-10);
+  }
+
+  /** 把一笔单子画成批发小票（客户联），样式对齐森果云收银小票 */
+  function buildBillCanvas(rec, qrImg) {
+    var isSale = rec.type === 'sale';
+    var W = 720, PAD = 44, R = W - PAD, SCALE = 2;
+    var all = rec.items || [];
+    var items = all.slice(0, 14);
+    var moreCount = all.length - items.length;
+
+    var tmp = document.createElement('canvas');
+    tmp.width = W * SCALE;
+    tmp.height = 3200 * SCALE;
+    var ctx = tmp.getContext('2d');
+    ctx.scale(SCALE, SCALE);
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, 3200);
+
+    var BLACK = '#111111', GRAY = '#666666', LIGHT = '#8a8a8a';
+
+    /* 「客户联」黑标签 */
+    ctx.fillStyle = '#111111';
+    ctx.fillRect(PAD - 8, 34, 122, 40);
+    ctx.fillStyle = '#ffffff';
+    setFont(ctx, 21, 'bold');
+    ctx.fillText(isSale ? '客户联' : '供货商联', PAD + 12, 62);
+
+    /* 店名 */
+    ctx.fillStyle = BLACK;
+    setFont(ctx, 44, 'bold');
+    ctx.textAlign = 'center';
+    ctx.fillText(String(db.settings.shopName || '水果批发').slice(0, 12), W / 2, 148);
+    ctx.textAlign = 'left';
+
+    var y = 202;
+
+    function infoLine(label, value) {
+      ctx.fillStyle = BLACK;
+      setFont(ctx, 23, 'normal');
+      ctx.fillText(label, PAD, y);
+      ctx.fillText(value, PAD + 148, y);
+      y += 46;
+    }
+
+    var tm = new Date(rec.createdAt || Date.now());
+    var hh = ('0' + tm.getHours()).slice(-2);
+    var mi = ('0' + tm.getMinutes()).slice(-2);
+    var ss = ('0' + tm.getSeconds()).slice(-2);
+
+    infoLine('收银时间：', rec.date + ' ' + hh + ':' + mi + ':' + ss);
+    infoLine('单　　号：', billNo(rec));
+    infoLine('客　　户：', String(rec.partyName || '散客').slice(0, 16));
+
+    /* 原单明细 */
+    y += 16;
+    ctx.fillStyle = BLACK;
+    setFont(ctx, 27, 'bold');
+    ctx.fillText('原单明细', PAD, y);
+
+    /* 表头（灰底） */
+    y += 16;
+    ctx.fillStyle = '#eceeed';
+    ctx.fillRect(PAD - 4, y, R - PAD + 8, 58);
+    ctx.fillStyle = GRAY;
+    setFont(ctx, 20, 'normal');
+    ctx.fillText('#', PAD + 12, y + 38);
+    ctx.fillText('货品', PAD + 56, y + 38);
+    ctx.textAlign = 'right';
+    ctx.fillText('数量', 434, y + 38);
+    ctx.fillText('单价', 552, y + 38);
+    ctx.fillText('小计', R - 12, y + 38);
+    ctx.textAlign = 'left';
+
+    y += 58;
+
+    var COL_QTY = 434, COL_PRICE = 552, COL_AMT = R - 12;
+
+    items.forEach(function (it, i) {
+      y += 58;
+      ctx.fillStyle = BLACK;
+      setFont(ctx, 21, 'normal');
+      ctx.fillText(String(i + 1), PAD + 12, y);
+
+      var name = String(it.name);
+      while (ctx.measureText(name).width > 280 && name.length > 2) name = name.slice(0, -1);
+      if (name !== String(it.name)) name = name.slice(0, -1) + '…';
+      ctx.fillText(name, PAD + 56, y);
+
+      ctx.textAlign = 'right';
+      ctx.fillText(S.fmtNum(it.qty) + it.unit, COL_QTY, y);
+      ctx.fillText(S.fmtNum(it.price), COL_PRICE, y);
+      ctx.fillText(S.fmtNum(it.amount), COL_AMT, y);
+      ctx.textAlign = 'left';
+    });
+
+    if (moreCount > 0) {
+      y += 40;
+      ctx.fillStyle = LIGHT;
+      setFont(ctx, 19, 'normal');
+      ctx.fillText('…… 另外 ' + moreCount + ' 种未显示', PAD + 56, y);
+    }
+
+    /* 合计：粗线 */
+    y += 26;
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(R, y); ctx.stroke();
+    ctx.lineWidth = 1;
+
+    y += 50;
+    ctx.fillStyle = BLACK;
+    setFont(ctx, 28, 'bold');
+    ctx.fillText('合计', PAD, y);
+    ctx.textAlign = 'right';
+    ctx.fillText(S.fmtNum(rec.total), COL_AMT, y);
+    ctx.textAlign = 'left';
+
+    /* 成交金额 */
+    y += 64;
+    ctx.textAlign = 'right';
+    ctx.fillStyle = BLACK;
+    setFont(ctx, 42, 'bold');
+    ctx.fillText('成交金额：' + S.fmtNum(rec.total) + '元', R - 8, y);
+
+    y += 44;
+    ctx.fillStyle = GRAY;
+    setFont(ctx, 21, 'normal');
+    var payWord = rec.paid >= rec.total - 0.004 ? '现结' : (rec.paid > 0.004 ? '部分现结' : '赊账');
+    ctx.fillText('（付款方式：' + payWord + '）', R - 8, y);
+    ctx.textAlign = 'left';
+
+    /* 欠款 */
+    var debt = S.round2(rec.total - rec.paid);
+    var totalDebt = 0;
+    if (rec.partyId) totalDebt = S.partyBalance(db, isSale ? 'customer' : 'supplier', rec.partyId);
+
+    if (debt > 0.004) {
+      y += 68;
+      ctx.textAlign = 'right';
+      ctx.fillStyle = BLACK;
+      setFont(ctx, 27, 'normal');
+      ctx.fillText('本单欠：' + S.fmtNum(debt) + '元', R - 8, y);
+      ctx.textAlign = 'left';
+    }
+    if (rec.partyId && totalDebt > 0.004) {
+      y += 56;
+      ctx.textAlign = 'right';
+      ctx.fillStyle = BLACK;
+      setFont(ctx, 36, 'bold');
+      ctx.fillText('总欠款：' + S.fmtNum(totalDebt) + '元', R - 8, y);
+      ctx.textAlign = 'left';
+    }
+
+    /* 虚线 + 两端圆点 */
+    y += 56;
+    ctx.strokeStyle = '#333333';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([9, 7]);
+    ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(R, y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#333333';
+    ctx.beginPath(); ctx.arc(PAD - 8, y, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(R + 8, y, 5, 0, Math.PI * 2); ctx.fill();
+
+    /* 店铺地址 */
+    if (db.settings.address) {
+      y += 48;
+      ctx.fillStyle = GRAY;
+      setFont(ctx, 22, 'normal');
+      ctx.textAlign = 'center';
+      ctx.fillText('店铺地址：' + String(db.settings.address).slice(0, 30), W / 2, y);
+      ctx.textAlign = 'left';
+    }
+
+    /* 收款码 */
+    if (qrImg) {
+      y += 22;
+      var qBox = 132, qy = y;
+      var ratio = qrImg.width / qrImg.height;
+      var qw = qBox, qh = qBox;
+      if (ratio > 1) qh = qBox / ratio;
+      else if (ratio < 1) qw = qBox * ratio;
+      try {
+        ctx.drawImage(qrImg, PAD + 4, qy, qw, qh);
+        ctx.fillStyle = GRAY;
+        setFont(ctx, 22, 'normal');
+        ctx.fillText('长按二维码付款', PAD + qBox + 34, qy + 50);
+        ctx.fillStyle = LIGHT;
+        setFont(ctx, 18, 'normal');
+        ctx.fillText(db.settings.phone ? '电话 ' + db.settings.phone : '', PAD + qBox + 34, qy + 92);
+        y = qy + Math.max(qh, 92) + 10;
+      } catch (e) {
+        y = qy - 22 + 26;
+      }
+    } else {
+      y += 26;
+      var foot = db.settings.phone ? ('电话 ' + db.settings.phone) : '';
+      if (db.settings.owner) foot = db.settings.owner + (foot ? '　' + foot : '');
+      if (foot) {
+        ctx.fillStyle = LIGHT;
+        setFont(ctx, 19, 'normal');
+        ctx.fillText(foot, PAD, y);
+      }
+    }
+
+    /* 裁剪成实际高度 */
+    var finalH = Math.ceil(y + 44);
+    var out = document.createElement('canvas');
+    out.width = W * SCALE;
+    out.height = finalH * SCALE;
+    out.getContext('2d').drawImage(tmp, 0, 0, W * SCALE, finalH * SCALE, 0, 0, W * SCALE, finalH * SCALE);
+    return out;
+  }
+
+  function loadImage(src) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = function () { reject(new Error('图片加载失败')); };
+      img.src = src;
+    });
+  }
+
+  function openBill(recId) {
+    var rec = null;
+    for (var i = 0; i < db.records.length; i++) if (db.records[i].id === recId) rec = db.records[i];
+    if (!rec) return;
+
+    function paint(qrImg) {
+      var canvas;
+      try {
+        canvas = buildBillCanvas(rec, qrImg);
+      } catch (e) {
+        toast('生成账单失败：' + e.message);
+        return;
+      }
+      openSheet({
+        title: '开单 · ' + (rec.partyName || '散客'),
+        body: '<img id="billImg" class="bill-preview" alt="账单">' +
+          '<div class="bill-hint">点下面 <b>分享</b> → 选 <b>微信</b> → 选好友<br/>或者长按图片 →「存储到照片」再发</div>',
+        foot: '<button class="btn-ghost" data-act="copy-bill" data-id="' + rec.id + '">复制文字</button>' +
+          '<button class="btn-primary" data-act="share-bill" data-id="' + rec.id + '">分享</button>',
+        after: function () {
+          canvas.toBlob(function (blob) {
+            if (!blob) return;
+            ui.billBlob = blob;
+            var img = $('#billImg');
+            if (img) img.src = URL.createObjectURL(blob);
+          }, 'image/png');
+        }
+      });
+    }
+
+    if (db.settings.qr) {
+      loadImage(db.settings.qr).then(paint).catch(function () { paint(null); });
+    } else {
+      paint(null);
+    }
+  }
+
+  function shareBill(recId) {
+    var blob = ui.billBlob;
+    if (!blob) { toast('图片还没准备好，稍等一下'); return; }
+
+    var rec = null;
+    for (var i = 0; i < db.records.length; i++) if (db.records[i].id === recId) rec = db.records[i];
+    var text = rec ? billText(rec) : '';
+
+    var file = null;
+    try {
+      file = new File([blob], '账单.png', { type: 'image/png' });
+    } catch (e) { file = null; }
+
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({
+        files: [file],
+        title: '销售单',
+        text: text
+      }).catch(function () {});
+      return;
+    }
+    if (navigator.share) {
+      navigator.share({ title: '销售单', text: text }).catch(function () {});
+      return;
+    }
+    toast('这个浏览器不支持分享，长按图片存到相册再发');
+  }
+
+  function copyBill(recId) {
+    var rec = null;
+    for (var i = 0; i < db.records.length; i++) if (db.records[i].id === recId) rec = db.records[i];
+    if (!rec) return;
+    var text = billText(rec);
+
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); toast('账单文字已复制，去微信粘贴'); }
+      catch (e) { toast('复制失败，请手动选择文字'); }
+      document.body.removeChild(ta);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        toast('账单文字已复制，去微信粘贴');
+      }).catch(fallback);
+    } else {
+      fallback();
+    }
+  }
+
   /* ================= 设置 ================= */
+
+  function qrBoxHTML() {
+    if (!db.settings.qr) {
+      return '<div style="font-size:12px;color:var(--muted);padding:8px 2px;line-height:1.8">' +
+        '上传你的<b>微信/支付宝收款码</b>截图，账单底部会带上<br/>「长按二维码付款」，客户可以直接付钱。</div>';
+    }
+    return '<div style="display:flex;align-items:center;gap:12px;padding:6px 2px">' +
+      '<img src="' + db.settings.qr + '" alt="收款码" style="width:92px;height:92px;object-fit:contain;border:1px solid var(--line);border-radius:10px;background:#fff"/>' +
+      '<div style="font-size:12px;color:var(--muted);line-height:1.8">已上传，账单会自动带上。<br/>' +
+      '<button class="mini-btn danger" data-act="del-qr" style="padding-left:0">删除收款码</button></div>' +
+      '</div>';
+  }
 
   function openSettings() {
     var body = '<div class="form">' +
       '<label class="field"><span>店铺名称</span><input id="set-name" value="' + esc(db.settings.shopName || '') + '" placeholder="如：老张水果批发"></label>' +
       '<label class="field"><span>老板姓名</span><input id="set-owner" value="' + esc(db.settings.owner || '') + '" placeholder="选填"></label>' +
       '<label class="field"><span>联系电话</span><input id="set-phone" inputmode="tel" value="' + esc(db.settings.phone || '') + '" placeholder="选填"></label>' +
-      '<div class="tips" style="padding:4px 2px 0">名称会显示在首页和打印出来的对账单上。</div>' +
+      '<label class="field"><span>店铺地址（印在账单上）</span><input id="set-addr" value="' + esc(db.settings.address || '') + '" placeholder="如：某某农贸批发大市场 A12 号"></label>' +
+      '<div class="field-block"><div class="block-head"><span>收款二维码（印在账单底部）</span>' +
+        '<button class="mini-btn" data-act="pick-qr">' + (db.settings.qr ? '重新上传' : '上传') + '</button></div>' +
+        '<div id="qrBox">' + qrBoxHTML() + '</div>' +
+      '</div>' +
+      '<div class="tips" style="padding:4px 2px 0">店名、地址、收款码都会出现在开出来的账单上。</div>' +
       '</div>';
     openSheet({
       title: '店铺设置',
@@ -2503,10 +2903,49 @@ input, select { outline: none; }
     db.settings.shopName = $('#set-name').value.trim() || '我的水果批发';
     db.settings.owner = $('#set-owner').value.trim();
     db.settings.phone = $('#set-phone').value.trim();
+    if ($('#set-addr')) db.settings.address = $('#set-addr').value.trim();
     S.saveStorage(db);
     render(false);
     closeSheet();
     toast('已保存');
+  }
+
+  /** 选一张收款码图片，缩到 400px 内再存（省空间） */
+  function pickQR() {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.addEventListener('change', function () {
+      var f = input.files && input.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        var img = new Image();
+        img.onload = function () {
+          var max = 400;
+          var s = Math.min(1, max / Math.max(img.width, img.height));
+          var c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(img.width * s));
+          c.height = Math.max(1, Math.round(img.height * s));
+          var cx = c.getContext('2d');
+          cx.fillStyle = '#fff';
+          cx.fillRect(0, 0, c.width, c.height);
+          cx.drawImage(img, 0, 0, c.width, c.height);
+          db.settings.qr = c.toDataURL('image/png');
+          if (!S.saveStorage(db)) {
+            db.settings.qr = '';
+            toast('图片太大，保存失败，换一张小一点的');
+            return;
+          }
+          if ($('#qrBox')) $('#qrBox').innerHTML = qrBoxHTML();
+          toast('收款码已保存');
+        };
+        img.onerror = function () { toast('这张图片读不出来'); };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(f);
+    });
+    input.click();
   }
 
   /* ================= 事件 ================= */
@@ -2621,7 +3060,17 @@ input, select { outline: none; }
         break;
 
       case 'save-entry':
-        saveEntry(el.getAttribute('data-type'), id || null);
+        saveEntry(el.getAttribute('data-type'), id || null, el.getAttribute('data-bill') === '1');
+        break;
+      case 'open-bill': openBill(id); break;
+      case 'share-bill': shareBill(id); break;
+      case 'copy-bill': copyBill(id); break;
+      case 'pick-qr': pickQR(); break;
+      case 'del-qr':
+        db.settings.qr = '';
+        S.saveStorage(db);
+        if ($('#qrBox')) $('#qrBox').innerHTML = qrBoxHTML();
+        toast('已删除收款码');
         break;
       case 'save-settle':
         saveSettle(kind, id || null);
@@ -2812,7 +3261,9 @@ input, select { outline: none; }
     openParty: openParty,
     openStatement: openStatement,
     openRecord: openRecord,
-    openSettings: openSettings
+    openSettings: openSettings,
+    openBill: openBill,
+    billText: billText
   };
 })();
 
