@@ -11,7 +11,592 @@
   <meta name="format-detection" content="telephone=no" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%231f7a3d'/%3E%3Ctext x='32' y='45' font-size='36' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E%E8%AE%B0%3C/text%3E%3C/svg%3E" />
   <title>水果记账本</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+/* 水果记账本 —— 移动端优先样式 */
+:root {
+  --bg: #f2f5f3;
+  --card: #ffffff;
+  --ink: #16211c;
+  --ink2: #47554f;
+  --muted: #8b968f;
+  --line: #e8ece9;
+  --green: #1f7a3d;
+  --green-2: #2f9c55;
+  --green-soft: #e8f5ec;
+  --orange: #d97b1c;
+  --orange-soft: #fdf0e1;
+  --red: #c8403a;
+  --red-soft: #fceceb;
+  --blue: #2c6aa8;
+  --blue-soft: #e9f1fa;
+  --radius: 16px;
+  --shadow: 0 2px 10px rgba(18, 48, 32, .055);
+  --tab-h: 58px;
+  --fg-font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--fg-font);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.no-scroll { overflow: hidden; }
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+button { cursor: pointer; border: none; background: none; padding: 0; }
+input, select { outline: none; }
+
+.ico { width: 20px; height: 20px; display: block; }
+
+/* ---------------- 外框 ---------------- */
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-bottom: calc(var(--tab-h) + 86px);
+  position: relative;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
+  background: linear-gradient(180deg, #1f7a3d 0%, #248044 100%);
+  color: #fff;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 3px 14px rgba(15, 70, 38, .18);
+}
+.topbar-main { flex: 1; min-width: 0; }
+.shop-name {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.shop-sub { font-size: 12px; opacity: .82; margin-top: 1px; }
+.topbar .icon-btn { color: #fff; background: rgba(255, 255, 255, .16); }
+
+.icon-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink2);
+  background: #f0f3f1;
+  flex: none;
+}
+.icon-btn:active { transform: scale(.94); }
+
+.view { padding: 12px 14px 0; }
+
+/* ---------------- 通用块 ---------------- */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 16px 4px 8px;
+}
+.section-head h3 { margin: 0; font-size: 14px; color: var(--ink2); font-weight: 600; }
+.link { color: var(--green); font-size: 13px; }
+
+.pos { color: var(--green); }
+.neg { color: var(--red); }
+.warn { color: var(--orange); }
+.muted { color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------------- 首页 ---------------- */
+.hero {
+  background: linear-gradient(135deg, #237d41 0%, #2f9c55 62%, #47ad63 100%);
+  color: #fff;
+  padding: 16px 16px 14px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -40px; top: -50px;
+  width: 150px; height: 150px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .09);
+}
+.hero-top { display: flex; align-items: baseline; justify-content: space-between; font-size: 12px; opacity: .9; }
+.hero-num { font-size: 34px; font-weight: 800; letter-spacing: -.5px; margin: 4px 0 10px; font-variant-numeric: tabular-nums; }
+.hero-foot { display: flex; gap: 8px; }
+.hero-foot > div {
+  flex: 1;
+  background: rgba(255, 255, 255, .14);
+  border-radius: 11px;
+  padding: 7px 9px;
+}
+.hero-foot b { display: block; font-size: 15px; font-variant-numeric: tabular-nums; }
+.hero-foot span { font-size: 11px; opacity: .85; }
+
+.quad { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.quad-item {
+  background: #fff; border-radius: 14px; padding: 11px 13px;
+  box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.quad-item span { font-size: 12px; color: var(--muted); }
+.quad-item b { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.debt {
+  display: flex; align-items: center; gap: 6px;
+  padding: 14px;
+}
+.debt-item { flex: 1; }
+.debt-item span { display: block; font-size: 12px; color: var(--muted); }
+.debt-item b { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.chev { color: #c6cec9; }
+
+.quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin: 12px 0 4px; }
+.quick-btn {
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 4px 10px;
+  box-shadow: var(--shadow);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--ink2); font-weight: 500;
+}
+.quick-btn .qb-ic {
+  width: 34px; height: 34px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+}
+.quick-btn:active { transform: scale(.96); }
+.q-sale .qb-ic { background: var(--green-soft); color: var(--green); }
+.q-buy .qb-ic { background: var(--orange-soft); color: var(--orange); }
+.q-in .qb-ic { background: var(--blue-soft); color: var(--blue); }
+.q-out .qb-ic { background: var(--red-soft); color: var(--red); }
+
+/* ---------------- 列表行 ---------------- */
+.list { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.row {
+  display: flex; align-items: center; gap: 11px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+.row:last-child { border-bottom: none; }
+.row:active { background: #f7f9f8; }
+.badge {
+  width: 30px; height: 30px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex: none;
+}
+.b-sale { background: var(--green-soft); color: var(--green); }
+.b-purchase { background: var(--orange-soft); color: var(--orange); }
+.b-receipt { background: var(--blue-soft); color: var(--blue); }
+.b-payment { background: #f3eafc; color: #7b46b5; }
+.b-expense { background: var(--red-soft); color: var(--red); }
+.row-main { flex: 1; min-width: 0; }
+.row-title {
+  font-size: 15px; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+  min-width: 0;
+}
+.row-title .t {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+}
+.row-sub {
+  font-size: 12px; color: var(--muted); margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.row-amt { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; flex: none; }
+.row-amt small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+.tag-debt {
+  font-style: normal; font-size: 11px; font-weight: 600;
+  color: var(--red); background: var(--red-soft);
+  padding: 1px 6px; border-radius: 6px; flex: none;
+}
+
+.empty {
+  text-align: center; color: var(--muted);
+  padding: 34px 20px; font-size: 13px; line-height: 1.9;
+}
+.empty b { display: block; font-size: 15px; color: var(--ink2); margin-bottom: 4px; }
+.empty .btn-primary { margin-top: 14px; display: inline-flex; width: auto; padding: 9px 22px; }
+
+/* ---------------- 账单页 ---------------- */
+.filters { margin-bottom: 10px; }
+.chips { display: flex; gap: 7px; overflow-x: auto; padding: 2px 0 8px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink2);
+  white-space: nowrap;
+}
+.chip.active { background: var(--green); color: #fff; border-color: var(--green); font-weight: 600; }
+
+.sumline {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  font-size: 12px; color: var(--muted);
+  padding: 0 4px 8px;
+}
+.sumline b { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+.day-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12px; color: var(--muted);
+  padding: 12px 4px 6px;
+}
+.day-head span:first-child { font-weight: 600; color: var(--ink2); font-size: 13px; }
+
+/* ---------------- 往来单位 ---------------- */
+.segmented {
+  display: flex; background: #e7ebe8; border-radius: 11px; padding: 3px; margin-bottom: 12px;
+}
+.segmented button {
+  flex: 1; padding: 8px; border-radius: 9px;
+  font-size: 14px; color: var(--ink2); font-weight: 500;
+}
+.segmented button.active { background: #fff; color: var(--green); font-weight: 700; box-shadow: 0 1px 4px rgba(0, 0, 0, .07); }
+
+.party-row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--line); }
+.party-row:last-child { border-bottom: none; }
+.avatar {
+  width: 38px; height: 38px; border-radius: 12px; flex: none;
+  background: var(--green-soft); color: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700;
+}
+.party-main { flex: 1; min-width: 0; }
+.party-name { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.party-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.party-amt { text-align: right; font-variant-numeric: tabular-nums; }
+.party-amt b { font-size: 17px; font-weight: 700; display: block; }
+.party-amt span { font-size: 11px; color: var(--muted); }
+
+/* ---------------- 统计 ---------------- */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.stat-cell { background: #fff; border-radius: 14px; padding: 12px 13px; box-shadow: var(--shadow); }
+.stat-cell span { font-size: 12px; color: var(--muted); }
+.stat-cell b { display: block; font-size: 19px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.stat-cell i { font-style: normal; font-size: 11px; color: var(--muted); }
+
+.chart { display: flex; align-items: flex-end; gap: 2px; height: 128px; overflow-x: auto; padding-top: 6px; }
+.chart-col { flex: 1; min-width: 6px; display: flex; flex-direction: column; align-items: center; height: 100%; }
+.chart-bars { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 2px; }
+.chart-bars i { width: 46%; max-width: 8px; border-radius: 3px 3px 0 0; display: block; min-height: 2px; }
+.bar-sale { background: var(--green-2); }
+.bar-buy { background: #f0b46a; }
+.chart-x { font-size: 9px; color: var(--muted); margin-top: 4px; height: 12px; }
+.legend { display: flex; gap: 14px; font-size: 11px; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }
+
+.rank-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; }
+.rank-no {
+  width: 20px; height: 20px; border-radius: 6px; flex: none;
+  background: #f0f3f1; color: var(--muted);
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.rank-item.top1 .rank-no { background: var(--green); color: #fff; }
+.rank-item.top2 .rank-no { background: #ffd9a8; color: #97590e; }
+.rank-item.top3 .rank-no { background: #e2e7e4; color: #5a6660; }
+.rank-main { flex: 1; min-width: 0; }
+.rank-name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-bar { height: 5px; background: #eef1ef; border-radius: 3px; margin-top: 5px; overflow: hidden; }
+.rank-bar i { display: block; height: 100%; background: linear-gradient(90deg, #4caf6f, #2f9c55); border-radius: 3px; }
+.rank-val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; flex: none; }
+.rank-val small { display: block; font-size: 11px; color: var(--muted); font-weight: 500; }
+
+/* ---------------- 我的 ---------------- */
+.list-group { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 12px; }
+.group-row { display: flex; align-items: center; gap: 12px; padding: 14px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.group-row:last-child { border-bottom: none; }
+.group-row:active { background: #f7f9f8; }
+.group-row .gr-ic { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex: none; }
+.group-row .gr-main { flex: 1; }
+.group-row .gr-sub { font-size: 12px; color: var(--muted); }
+.group-row .chev { color: #c6cec9; }
+.danger { color: var(--red) !important; }
+.tips { font-size: 12px; color: var(--muted); padding: 0 6px 20px; line-height: 1.8; }
+
+/* ---------------- 底部 tab ---------------- */
+.tabbar {
+  position: fixed;
+  left: 50%; bottom: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 760px;
+  height: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(255, 255, 255, .96);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--line);
+  display: flex;
+  z-index: 30;
+}
+.tabbar button {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  color: #9aa5a0; font-size: 11px;
+}
+.tabbar button.active { color: var(--green); font-weight: 600; }
+.tabbar .ico { width: 22px; height: 22px; }
+
+.fab {
+  position: fixed;
+  right: max(16px, calc(50% - 380px + 16px));
+  bottom: calc(var(--tab-h) + 18px + env(safe-area-inset-bottom));
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2f9c55, #1f7a3d);
+  color: #fff;
+  font-size: 30px; font-weight: 300; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 18px rgba(31, 122, 61, .38);
+  z-index: 31;
+}
+.fab:active { transform: scale(.93); }
+
+/* ---------------- 弹层 ---------------- */
+.sheet-root { position: fixed; inset: 0; z-index: 100; display: none; }
+.sheet-root.open { display: block; }
+.sheet-mask { position: absolute; inset: 0; background: rgba(12, 26, 18, .42); animation: fadeIn .18s ease; }
+.sheet {
+  position: absolute;
+  left: 50%; bottom: 0;
+  transform: translateX(-50%);
+  width: 100%; max-width: 760px;
+  max-height: 92vh;
+  background: #f6f8f7;
+  border-radius: 20px 20px 0 0;
+  display: flex; flex-direction: column;
+  animation: slideUp .24s cubic-bezier(.22, .8, .3, 1);
+  overflow: hidden;
+}
+@keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.sheet-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px;
+  background: #f6f8f7;
+  flex: none;
+}
+.sheet-head h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.sheet-body { flex: 1; overflow-y: auto; padding: 4px 14px 20px; -webkit-overflow-scrolling: touch; }
+.sheet-foot {
+  flex: none;
+  padding: 10px 14px calc(12px + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1px solid var(--line);
+  display: flex; gap: 10px;
+}
+
+.btn-primary {
+  flex: 1;
+  height: 48px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #2f9c55, #1f7a3d);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  box-shadow: 0 4px 12px rgba(31, 122, 61, .24);
+}
+.btn-primary:active { transform: scale(.985); }
+.btn-ghost {
+  height: 48px; padding: 0 20px;
+  border-radius: 13px;
+  background: #eef2f0;
+  color: var(--ink2);
+  font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-ghost.sq { width: 48px; padding: 0; }
+
+/* ---------------- 表单 ---------------- */
+.form { display: flex; flex-direction: column; gap: 10px; }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field > span { font-size: 12px; color: var(--muted); padding-left: 2px; }
+.field input, .field select {
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0 12px;
+  font-size: 16px;
+  width: 100%;
+  appearance: none;
+}
+.field input:focus, .field select:focus { border-color: var(--green-2); box-shadow: 0 0 0 3px rgba(47, 156, 85, .12); }
+.field input::placeholder { color: #b3bcb7; font-size: 14px; }
+
+.field-block {
+  background: #fff; border-radius: 14px; border: 1px solid var(--line);
+  padding: 10px 10px 8px; display: flex; flex-direction: column; gap: 8px;
+}
+.block-head { display: flex; align-items: center; justify-content: space-between; }
+.block-head > span { font-size: 12px; color: var(--muted); padding-left: 2px; }
+.mini-btn { font-size: 13px; color: var(--green); font-weight: 600; padding: 2px 4px; }
+
+.item-row { background: #f7f9f8; border-radius: 11px; padding: 8px; display: flex; flex-direction: column; gap: 7px; }
+.ir-line { display: flex; align-items: center; gap: 6px; }
+.ir-name {
+  flex: 1; height: 38px; border-radius: 9px; border: 1px solid var(--line);
+  background: #fff; padding: 0 10px; font-size: 15px; min-width: 0;
+}
+.ir-del { width: 30px; height: 30px; border-radius: 50%; color: #b3bcb7; display: flex; align-items: center; justify-content: center; flex: none; }
+.ir-del .ico { width: 16px; height: 16px; }
+.ir-grid { display: grid; grid-template-columns: 1.1fr .9fr 1.1fr 1fr; gap: 6px; }
+.ir-cell { display: flex; flex-direction: column; gap: 2px; }
+.ir-cell span { font-size: 10px; color: var(--muted); padding-left: 3px; }
+.ir-cell input, .ir-cell select {
+  height: 38px; border-radius: 9px; border: 1px solid var(--line);
+  background: #fff; padding: 0 8px; font-size: 15px; width: 100%; appearance: none;
+}
+.ir-amt { display: flex; flex-direction: column; gap: 2px; }
+.ir-amt span { font-size: 10px; color: var(--muted); padding-left: 3px; }
+.ir-amt b { height: 38px; display: flex; align-items: center; justify-content: flex-end; font-size: 15px; font-variant-numeric: tabular-nums; padding-right: 2px; }
+
+.common-strip { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0; scrollbar-width: none; }
+.common-strip::-webkit-scrollbar { display: none; }
+.strip-block { display: flex; flex-direction: column; gap: 4px; }
+.strip-label { font-size: 11px; color: var(--muted); padding-left: 3px; }
+.pchip {
+  flex: none; padding: 6px 11px; border-radius: 999px;
+  background: #fff; border: 1px solid var(--line);
+  font-size: 12px; color: var(--ink2);
+}
+.pchip b { font-weight: 600; }
+
+.sum-card { background: #fff; border-radius: 14px; border: 1px solid var(--line); padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; }
+.sum-line { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--ink2); }
+.sum-line > b { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.sum-line input {
+  width: 130px; height: 40px; text-align: right; font-size: 17px; font-weight: 600;
+  border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; background: #f7f9f8;
+}
+.pay-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.pay-actions button { font-size: 12px; padding: 5px 12px; border-radius: 999px; background: #eef2f0; color: var(--ink2); }
+.pay-actions button.primary { background: var(--green-soft); color: var(--green); font-weight: 600; }
+.debt-line { border-top: 1px dashed var(--line); padding-top: 9px; }
+.debt-line b { font-size: 16px; color: var(--red); }
+
+.quick-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 6px 2px 10px; }
+.qm-btn {
+  background: #fff; border-radius: 16px; padding: 16px;
+  display: flex; flex-direction: column; gap: 7px;
+  box-shadow: var(--shadow); text-align: left;
+}
+.qm-btn .qb-ic { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.qm-btn b { font-size: 16px; }
+.qm-btn small { font-size: 12px; color: var(--muted); }
+
+/* 详情 */
+.detail-hero { text-align: center; padding: 6px 0 16px; }
+.detail-hero .dh-label { font-size: 12px; color: var(--muted); }
+.detail-hero .dh-num { font-size: 36px; font-weight: 800; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.detail-hero .dh-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 12px; }
+.detail-actions button {
+  background: #fff; border-radius: 12px; padding: 12px;
+  font-size: 14px; color: var(--ink2); font-weight: 500;
+  box-shadow: var(--shadow);
+}
+.detail-actions button.primary { background: var(--green); color: #fff; font-weight: 600; box-shadow: 0 4px 12px rgba(31, 122, 61, .22); }
+
+.kv { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.kv:last-child { border-bottom: none; }
+.kv span { color: var(--muted); }
+.kv b { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* 对账单 */
+.stmt-table { width: 100%; border-collapse: collapse; background: #fff; font-size: 12px; border-radius: 12px; overflow: hidden; }
+.stmt-table th, .stmt-table td { padding: 7px 6px; border-bottom: 1px solid var(--line); text-align: right; }
+.stmt-table th { background: #f4f7f5; color: var(--muted); font-weight: 600; font-size: 11px; }
+.stmt-table th:first-child, .stmt-table td:first-child { text-align: left; }
+.stmt-table td.num { font-variant-numeric: tabular-nums; }
+.stmt-table tr:last-child td { border-bottom: none; }
+.stmt-total { display: flex; justify-content: space-between; padding: 10px 2px; font-size: 13px; }
+.stmt-total b { font-size: 16px; }
+.range-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 10px; }
+.range-row .field { flex: 1; }
+.range-row .field input { height: 42px; font-size: 14px; }
+
+/* ---------------- toast ---------------- */
+.toast-root {
+  position: fixed; left: 0; right: 0;
+  bottom: calc(var(--tab-h) + 90px);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  pointer-events: none; z-index: 200;
+}
+.toast {
+  background: rgba(22, 33, 28, .92);
+  color: #fff;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  animation: toastIn .2s ease;
+  max-width: 80vw;
+  text-align: center;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ---------------- 打印 ---------------- */
+.print-root { display: none; }
+
+@media print {
+  body { background: #fff; }
+  .app, #sheetRoot, .toast-root { display: none !important; }
+  .print-root { display: block !important; }
+  .print-sheet { max-width: 190mm; margin: 0 auto; padding: 6mm 0; color: #000; font-family: var(--fg-font); }
+  .print-sheet h1 { font-size: 20px; text-align: center; margin: 0 0 4px; letter-spacing: 4px; }
+  .print-sheet .p-sub { text-align: center; font-size: 12px; color: #444; margin-bottom: 12px; }
+  .print-sheet .p-meta { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+  .print-sheet table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  .print-sheet th, .print-sheet td { border: 1px solid #999; padding: 5px 6px; }
+  .print-sheet th { background: #eee; font-weight: 600; }
+  .print-sheet td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  .print-sheet .p-foot { display: flex; justify-content: space-between; margin-top: 26px; font-size: 12px; }
+  .print-sheet .p-thanks { text-align: center; font-size: 11px; color: #666; margin-top: 18px; }
+}
+
+/* ---------------- 桌面适配 ---------------- */
+@media (min-width: 640px) {
+  .view { padding: 16px 18px 0; }
+  .hero-num { font-size: 38px; }
+  .quad { grid-template-columns: repeat(4, 1fr); }
+  .stat-grid { grid-template-columns: repeat(4, 1fr); }
+  .quick { gap: 12px; }
+  .sheet { border-radius: 20px; bottom: auto; top: 50%; transform: translate(-50%, -50%); max-height: 88vh; animation: popIn .2s ease; }
+  @keyframes popIn { from { opacity: 0; transform: translate(-50%, -46%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+}
+
+</style>
 </head>
 <body>
   <div class="app">
@@ -36,7 +621,2201 @@
   <datalist id="prodList"></datalist>
   <datalist id="partyList"></datalist>
 
-  <script src="store.js"></script>
-  <script src="app.js"></script>
+  <script>
+/*!
+ * 水果批发记账本 —— 数据层
+ * 纯 JS，不依赖 DOM，可在 Node 中直接测试。
+ * 账单模型统一为 records，type 取值：sale 销售 / purchase 采购 / receipt 收款 / payment 付款 / expense 支出
+ */
+(function (root, factory) {
+  'use strict';
+  var api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  if (root) root.SGStore = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  var DB_KEY = 'sgjz.v1';
+  var BACKUP_KEY = 'sgjz.backup.v1';
+
+  var UNITS = ['斤', '公斤', '箱', '件', '筐', '袋', '个'];
+  var EXPENSE_CATS = ['运费', '人工', '包装', '租金', '水电', '损耗', '其他'];
+
+  var TYPE_META = {
+    sale: { label: '卖货', long: '销售单', kind: 'customer', short: '销' },
+    purchase: { label: '进货', long: '采购单', kind: 'supplier', short: '采' },
+    receipt: { label: '收欠款', long: '收款', kind: 'customer', short: '收' },
+    payment: { label: '付货款', long: '付款', kind: 'supplier', short: '付' },
+    expense: { label: '支出', long: '费用', kind: '', short: '支' }
+  };
+
+  /* ---------------- 基础工具 ---------------- */
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  function num(v) {
+    if (typeof v === 'number') return isFinite(v) ? v : 0;
+    var s = String(v == null ? '' : v).replace(/[^\d.\-]/g, '');
+    var n = parseFloat(s);
+    return isFinite(n) ? n : 0;
+  }
+
+  function round2(n) {
+    var x = Number(n);
+    if (!isFinite(x)) x = 0;
+    // 先收敛浮点误差（1.005*100 = 100.49999…），避免 0.01 级误差
+    return Math.round(Number((x * 100).toFixed(4))) / 100;
+  }
+
+  function fmtNum(n) {
+    var v = round2(num(n));
+    var neg = v < 0;
+    v = Math.abs(v);
+    var s = Number.isInteger(v) ? String(v) : v.toFixed(2);
+    var parts = s.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (neg ? '-' : '') + parts.join('.');
+  }
+
+  function money(n) {
+    var v = round2(num(n));
+    return (v < 0 ? '-' : '') + '¥' + fmtNum(Math.abs(v));
+  }
+
+  function pad2(n) { return n < 10 ? '0' + n : String(n); }
+
+  function dateStr(d) {
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  }
+
+  function today() { return dateStr(new Date()); }
+
+  function parseDate(s) {
+    var p = String(s || '').split('-');
+    return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+  }
+
+  function addDays(s, n) {
+    var d = parseDate(s);
+    d.setDate(d.getDate() + n);
+    return dateStr(d);
+  }
+
+  function monthRange(offset) {
+    var d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() + (offset || 0));
+    var from = dateStr(d);
+    var end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    return [from, dateStr(end)];
+  }
+
+  function weekStart(s) {
+    var d = parseDate(s);
+    var wd = d.getDay() === 0 ? 7 : d.getDay();
+    d.setDate(d.getDate() - (wd - 1));
+    return dateStr(d);
+  }
+
+  var WEEK_CN = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+  function weekdayCN(s) { return WEEK_CN[parseDate(s).getDay()]; }
+
+  function cnDate(s) {
+    var d = parseDate(s);
+    return (d.getMonth() + 1) + '月' + d.getDate() + '日';
+  }
+
+  function inRange(date, from, to) {
+    if (from && date < from) return false;
+    if (to && date > to) return false;
+    return true;
+  }
+
+  /* ---------------- 数据结构 ---------------- */
+
+  function emptyDB() {
+    return {
+      version: 1,
+      settings: { shopName: '我的水果批发', owner: '', phone: '' },
+      customers: [],
+      suppliers: [],
+      products: [],
+      records: []
+    };
+  }
+
+  function normalize(raw) {
+    var base = emptyDB();
+    if (!raw || typeof raw !== 'object') return base;
+    var out = {
+      version: 1,
+      settings: Object.assign({}, base.settings, raw.settings || {}),
+      customers: [],
+      suppliers: [],
+      products: [],
+      records: []
+    };
+    ['customers', 'suppliers'].forEach(function (k) {
+      (Array.isArray(raw[k]) ? raw[k] : []).forEach(function (p) {
+        if (!p || !p.name) return;
+        out[k].push({
+          id: p.id || uid(),
+          name: String(p.name),
+          phone: p.phone || '',
+          note: p.note || '',
+          opening: round2(num(p.opening)),
+          createdAt: p.createdAt || Date.now()
+        });
+      });
+    });
+    (Array.isArray(raw.products) ? raw.products : []).forEach(function (p) {
+      if (!p || !p.name) return;
+      out.products.push({
+        id: p.id || uid(),
+        name: String(p.name),
+        unit: p.unit || '斤',
+        price: round2(num(p.price)),
+        lastUsedAt: p.lastUsedAt || 0
+      });
+    });
+    (Array.isArray(raw.records) ? raw.records : []).forEach(function (r) {
+      if (!r || !r.type || !TYPE_META[r.type]) return;
+      var rec = {
+        id: r.id || uid(),
+        type: r.type,
+        date: r.date || today(),
+        note: r.note || '',
+        createdAt: r.createdAt || Date.now(),
+        partyId: r.partyId || '',
+        partyName: r.partyName || ''
+      };
+      if (r.type === 'sale' || r.type === 'purchase') {
+        rec.items = (Array.isArray(r.items) ? r.items : []).map(function (it) {
+          return {
+            name: String(it.name || '').trim() || '未命名',
+            unit: it.unit || '斤',
+            qty: round2(num(it.qty)),
+            price: round2(num(it.price)),
+            amount: round2(num(it.amount) || num(it.qty) * num(it.price))
+          };
+        });
+        rec.total = r.total != null
+          ? round2(num(r.total))
+          : round2(rec.items.reduce(function (s, it) { return s + it.amount; }, 0));
+        rec.paid = r.paid != null ? round2(num(r.paid)) : rec.total;
+      } else if (r.type === 'receipt' || r.type === 'payment') {
+        rec.amount = round2(num(r.amount));
+      } else if (r.type === 'expense') {
+        rec.amount = round2(num(r.amount));
+        rec.category = r.category || '其他';
+      }
+      out.records.push(rec);
+    });
+    out.records.sort(sortRecords);
+    return out;
+  }
+
+  function sortRecords(a, b) {
+    if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+    return (b.createdAt || 0) - (a.createdAt || 0);
+  }
+
+  /* ---------------- 读写 ---------------- */
+
+  function loadStorage() {
+    try {
+      if (typeof localStorage === 'undefined') return emptyDB();
+      var raw = localStorage.getItem(DB_KEY);
+      if (!raw) return emptyDB();
+      return normalize(JSON.parse(raw));
+    } catch (e) {
+      console.warn('[记账本] 读取数据失败：', e);
+      return emptyDB();
+    }
+  }
+
+  function saveStorage(db) {
+    try {
+      if (typeof localStorage === 'undefined') return false;
+      var json = JSON.stringify(db);
+      var prev = localStorage.getItem(DB_KEY);
+      if (prev && prev !== json) localStorage.setItem(BACKUP_KEY, prev);
+      localStorage.setItem(DB_KEY, json);
+      return true;
+    } catch (e) {
+      console.warn('[记账本] 保存失败：', e);
+      return false;
+    }
+  }
+
+  /* ---------------- 往来单位余额 ---------------- */
+
+  function findParty(db, kind, id) {
+    var list = kind === 'customer' ? db.customers : db.suppliers;
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+
+  /**
+   * 应收（客户）/ 应付（供货商）余额
+   * 客户：期初 + Σ(销售金额 - 开单时已收) - Σ收款
+   * 供货商：期初 + Σ(采购金额 - 开单时已付) - Σ付款
+   */
+  function partyBalance(db, kind, partyId) {
+    var p = findParty(db, kind, partyId);
+    if (!p) return 0;
+    var bal = num(p.opening);
+    var isCustomer = kind === 'customer';
+    for (var i = 0; i < db.records.length; i++) {
+      var r = db.records[i];
+      if (r.partyId !== partyId) continue;
+      if (isCustomer) {
+        if (r.type === 'sale') bal += num(r.total) - num(r.paid);
+        else if (r.type === 'receipt') bal -= num(r.amount);
+      } else {
+        if (r.type === 'purchase') bal += num(r.total) - num(r.paid);
+        else if (r.type === 'payment') bal -= num(r.amount);
+      }
+    }
+    return round2(bal);
+  }
+
+  /** 欠款（>0 才计），用于首页合计 */
+  function receivableTotal(db) {
+    var t = 0;
+    db.customers.forEach(function (c) {
+      var b = partyBalance(db, 'customer', c.id);
+      if (b > 0) t += b;
+    });
+    return round2(t);
+  }
+
+  function prepaidTotal(db) {
+    var t = 0;
+    db.customers.forEach(function (c) {
+      var b = partyBalance(db, 'customer', c.id);
+      if (b < 0) t += -b;
+    });
+    return round2(t);
+  }
+
+  function payableTotal(db) {
+    var t = 0;
+    db.suppliers.forEach(function (c) {
+      var b = partyBalance(db, 'supplier', c.id);
+      if (b > 0) t += b;
+    });
+    return round2(t);
+  }
+
+  function partyLastDate(db, kind, partyId) {
+    var isCustomer = kind === 'customer';
+    for (var i = 0; i < db.records.length; i++) {
+      var r = db.records[i];
+      if (r.partyId !== partyId) continue;
+      if (isCustomer && (r.type === 'sale' || r.type === 'receipt')) return r.date;
+      if (!isCustomer && (r.type === 'purchase' || r.type === 'payment')) return r.date;
+    }
+    return '';
+  }
+
+  function partyList(db, kind) {
+    var list = (kind === 'customer' ? db.customers : db.suppliers).map(function (p) {
+      var bal = partyBalance(db, kind, p.id);
+      return {
+        id: p.id,
+        name: p.name,
+        phone: p.phone,
+        note: p.note,
+        balance: bal,
+        lastDate: partyLastDate(db, kind, p.id)
+      };
+    });
+    list.sort(function (a, b) {
+      if (Math.abs(b.balance) !== Math.abs(a.balance)) return Math.abs(b.balance) - Math.abs(a.balance);
+      return (b.lastDate || '') < (a.lastDate || '') ? -1 : 1;
+    });
+    return list;
+  }
+
+  function partyRecords(db, kind, partyId) {
+    var isCustomer = kind === 'customer';
+    return db.records.filter(function (r) {
+      if (r.partyId !== partyId) return false;
+      return isCustomer ? (r.type === 'sale' || r.type === 'receipt') : (r.type === 'purchase' || r.type === 'payment');
+    });
+  }
+
+  /* ---------------- 区间统计 ---------------- */
+
+  /**
+   * 现金口径 + 经营口径
+   * sale 销售收入 / purchase 采购支出 / expense 其他费用
+   * cashIn 实际进账（销售单已收 + 收款） / cashOut 实际出账（采购单已付 + 付款 + 费用）
+   */
+  function rangeStats(db, from, to) {
+    var s = {
+      sale: 0, purchase: 0, expense: 0,
+      cashIn: 0, cashOut: 0,
+      saleCount: 0, purchaseCount: 0, expenseCount: 0, receiptCount: 0, paymentCount: 0,
+      creditSale: 0, creditPurchase: 0
+    };
+    db.records.forEach(function (r) {
+      if (!inRange(r.date, from, to)) return;
+      if (r.type === 'sale') {
+        s.sale += num(r.total); s.cashIn += num(r.paid); s.saleCount++;
+        s.creditSale += num(r.total) - num(r.paid);
+      } else if (r.type === 'purchase') {
+        s.purchase += num(r.total); s.cashOut += num(r.paid); s.purchaseCount++;
+        s.creditPurchase += num(r.total) - num(r.paid);
+      } else if (r.type === 'expense') {
+        s.expense += num(r.amount); s.cashOut += num(r.amount); s.expenseCount++;
+      } else if (r.type === 'receipt') {
+        s.cashIn += num(r.amount); s.receiptCount++;
+      } else if (r.type === 'payment') {
+        s.cashOut += num(r.amount); s.paymentCount++;
+      }
+    });
+    s.sale = round2(s.sale);
+    s.purchase = round2(s.purchase);
+    s.expense = round2(s.expense);
+    s.cashIn = round2(s.cashIn);
+    s.cashOut = round2(s.cashOut);
+    s.gross = round2(s.sale - s.purchase);            // 进销差额
+    s.net = round2(s.sale - s.purchase - s.expense);  // 扣掉费用后的经营结余
+    s.cashBalance = round2(s.cashIn - s.cashOut);     // 现金流水
+    s.creditSale = round2(s.creditSale);
+    s.creditPurchase = round2(s.creditPurchase);
+    return s;
+  }
+
+  function expenseByCat(db, from, to) {
+    var map = {};
+    db.records.forEach(function (r) {
+      if (r.type !== 'expense' || !inRange(r.date, from, to)) return;
+      var k = r.category || '其他';
+      map[k] = round2((map[k] || 0) + num(r.amount));
+    });
+    return Object.keys(map).map(function (k) { return { name: k, amount: map[k] }; })
+      .sort(function (a, b) { return b.amount - a.amount; });
+  }
+
+  function topProducts(db, from, to, limit) {
+    var map = {};
+    db.records.forEach(function (r) {
+      if (r.type !== 'sale' || !inRange(r.date, from, to)) return;
+      (r.items || []).forEach(function (it) {
+        var k = it.name;
+        if (!map[k]) map[k] = { name: k, unit: it.unit || '斤', qty: 0, amount: 0 };
+        map[k].qty = round2(map[k].qty + num(it.qty));
+        map[k].amount = round2(map[k].amount + num(it.amount));
+      });
+    });
+    return Object.keys(map).map(function (k) { return map[k]; })
+      .sort(function (a, b) { return b.amount - a.amount; })
+      .slice(0, limit || 5);
+  }
+
+  function topParties(db, from, to, kind, limit) {
+    var isCustomer = kind === 'customer';
+    var map = {};
+    db.records.forEach(function (r) {
+      if (!inRange(r.date, from, to)) return;
+      var hit = isCustomer ? r.type === 'sale' : r.type === 'purchase';
+      if (!hit || !r.partyId) return;
+      if (!map[r.partyId]) map[r.partyId] = { name: r.partyName, amount: 0, count: 0 };
+      map[r.partyId].amount = round2(map[r.partyId].amount + num(r.total));
+      map[r.partyId].count++;
+    });
+    return Object.keys(map).map(function (k) { return map[k]; })
+      .sort(function (a, b) { return b.amount - a.amount; })
+      .slice(0, limit || 5);
+  }
+
+  function dailySeries(db, from, to) {
+    var map = {};
+    db.records.forEach(function (r) {
+      if (!inRange(r.date, from, to)) return;
+      if (!map[r.date]) map[r.date] = { date: r.date, sale: 0, purchase: 0 };
+      if (r.type === 'sale') map[r.date].sale = round2(map[r.date].sale + num(r.total));
+      if (r.type === 'purchase') map[r.date].purchase = round2(map[r.date].purchase + num(r.total));
+    });
+    var out = [];
+    var d = from;
+    var guard = 0;
+    while (d <= to && guard < 400) {
+      out.push(map[d] || { date: d, sale: 0, purchase: 0 });
+      d = addDays(d, 1);
+      guard++;
+    }
+    return out;
+  }
+
+  function unbilledList(db, kind) {
+    return partyList(db, kind).filter(function (p) { return round2(p.balance) > 0; });
+  }
+
+  /* ---------------- 对账单 ---------------- */
+
+  function statement(db, kind, partyId, from, to) {
+    var p = findParty(db, kind, partyId);
+    if (!p) return null;
+    var isCustomer = kind === 'customer';
+    var all = partyRecords(db, kind, partyId).slice().sort(function (a, b) {
+      if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+      return (a.createdAt || 0) - (b.createdAt || 0);
+    });
+    function deltaOf(r) {
+      var amount = 0;   // 单据金额
+      var paid = 0;     // 开单时当场已收 / 已付
+      var delta = 0;    // 对欠款的影响
+      var label = '';
+      if (isCustomer) {
+        if (r.type === 'sale') { amount = num(r.total); paid = num(r.paid); delta = round2(amount - paid); label = '销售'; }
+        else if (r.type === 'receipt') { paid = num(r.amount); delta = round2(-paid); label = '收款'; }
+      } else {
+        if (r.type === 'purchase') { amount = num(r.total); paid = num(r.paid); delta = round2(amount - paid); label = '采购'; }
+        else if (r.type === 'payment') { paid = num(r.amount); delta = round2(-paid); label = '付款'; }
+      }
+      return { amount: round2(amount), paid: round2(paid), delta: delta, label: label };
+    }
+
+    // 第一遍：把区间开始之前的发生额并进期初余额
+    var opening = num(p.opening);
+    all.forEach(function (r) {
+      if (r.date >= (from || '')) return;
+      opening += deltaOf(r).delta;
+    });
+    opening = round2(opening);
+
+    // 第二遍：区间内的流水，结余从期初开始滚动
+    var rows = [];
+    var balance = opening;
+    all.forEach(function (r) {
+      if (r.date < (from || '')) return;
+      if (to && r.date > to) return;
+      var d = deltaOf(r);
+      balance = round2(balance + d.delta);
+      rows.push({
+        id: r.id, date: r.date, type: r.type, label: d.label,
+        detail: itemsText(r.items), note: r.note || '',
+        amount: d.amount, paid: d.paid, delta: d.delta, balance: balance
+      });
+    });
+    var totalIn = 0, totalOut = 0;
+    rows.forEach(function (x) {
+      if (x.delta > 0) totalIn += x.delta;
+      else totalOut += -x.delta;
+    });
+    return {
+      party: p,
+      kind: kind,
+      from: from,
+      to: to,
+      opening: opening,
+      rows: rows,
+      closing: round2(balance),
+      totalIn: round2(totalIn),   // 本期新增欠款
+      totalOut: round2(totalOut)  // 本期回收 / 支付
+    };
+  }
+
+  function itemsText(items) {
+    if (!items || !items.length) return '';
+    return items.map(function (it) {
+      return it.name + ' ' + round2(it.qty) + it.unit + '×' + round2(it.price);
+    }).join('，');
+  }
+
+  /* ---------------- 导入导出 ---------------- */
+
+  function toCSV(db) {
+    var head = ['日期', '类型', '往来单位', '明细', '数量', '单价', '金额', '已收/已付', '欠款', '备注'];
+    var lines = [head.join(',')];
+    db.records.forEach(function (r) {
+      var type = (TYPE_META[r.type] || {}).long || r.type;
+      if (r.type === 'sale' || r.type === 'purchase') {
+        r.items.forEach(function (it) {
+          var debt = round2(num(r.total) - num(r.paid));
+          lines.push([
+            r.date, type, r.partyName || '', it.name, round2(it.qty), round2(it.price),
+            round2(it.amount), '', debt, (r.note || '').replace(/,/g, '，')
+          ].join(','));
+        });
+        if (!r.items.length) {
+          lines.push([r.date, type, r.partyName || '', '', '', '', r.total, r.paid, round2(r.total - r.paid), (r.note || '').replace(/,/g, '，')].join(','));
+        }
+      } else {
+        lines.push([
+          r.date, type, r.partyName || '', r.category || '', '', '', r.amount, r.amount, '', (r.note || '').replace(/,/g, '，')
+        ].join(','));
+      }
+    });
+    return '\ufeff' + lines.join('\r\n');
+  }
+
+  function exportJSON(db) { return JSON.stringify(db, null, 2); }
+
+  function importJSON(text) {
+    var raw = JSON.parse(text);
+    if (!raw || typeof raw !== 'object') throw new Error('文件内容不是有效数据');
+    var has = (raw.records && raw.records.length) || (raw.customers && raw.customers.length);
+    if (!has) throw new Error('没有找到账单数据，请确认是本 App 导出的文件');
+    return normalize(raw);
+  }
+
+  /* ---------------- 示例数据 ---------------- */
+
+  function demoDB() {
+    var db = emptyDB();
+    db.settings.shopName = '老张水果批发';
+    db.settings.owner = '张老板';
+    db.settings.phone = '13800000000';
+
+    function c(name, phone, opening) {
+      var p = { id: uid(), name: name, phone: phone || '', note: '', opening: opening || 0, createdAt: Date.now() };
+      db.customers.push(p); return p;
+    }
+    function s(name, phone) {
+      var p = { id: uid(), name: name, phone: phone || '', note: '', opening: 0, createdAt: Date.now() };
+      db.suppliers.push(p); return p;
+    }
+    function prod(name, unit, price) {
+      db.products.push({ id: uid(), name: name, unit: unit, price: price, lastUsedAt: Date.now() });
+    }
+
+    var c1 = c('老王水果店', '13911112222', 0);
+    var c2 = c('鲜果多超市', '13922223333', 0);
+    var c3 = c('小李果行', '13933334444', 200);
+    var c4 = c('社区团购·张姐', '13944445555', 0);
+    var c5 = c('城东菜场 刘姐', '', 0);
+
+    var s1 = s('山东果园 老赵', '13700001111');
+    var s2 = s('广西砂糖橘基地', '13700002222');
+    var s3 = s('本地批发市场 阿强', '');
+
+    prod('砂糖橘', '斤', 3.8);
+    prod('香蕉', '箱', 45);
+    prod('红富士苹果', '斤', 5.2);
+    prod('西瓜', '斤', 1.6);
+    prod('阳光玫瑰葡萄', '箱', 88);
+    prod('沃柑', '斤', 4.5);
+
+    var t = today();
+    function d(offset) { return addDays(t, -offset); }
+    var now = Date.now();
+
+    function sale(day, party, items, paidRate, note) {
+      var total = round2(items.reduce(function (a, it) { return a + it.qty * it.price; }, 0));
+      db.records.push({
+        id: uid(), type: 'sale', date: day, partyId: party.id, partyName: party.name,
+        items: items.map(function (it) { return { name: it.name, unit: it.unit, qty: it.qty, price: it.price, amount: round2(it.qty * it.price) }; }),
+        total: total, paid: round2(total * paidRate), note: note || '', createdAt: now--
+      });
+    }
+    function purchase(day, party, items, paidRate, note) {
+      var total = round2(items.reduce(function (a, it) { return a + it.qty * it.price; }, 0));
+      db.records.push({
+        id: uid(), type: 'purchase', date: day, partyId: party.id, partyName: party.name,
+        items: items.map(function (it) { return { name: it.name, unit: it.unit, qty: it.qty, price: it.price, amount: round2(it.qty * it.price) }; }),
+        total: total, paid: round2(total * paidRate), note: note || '', createdAt: now--
+      });
+    }
+    function pay(day, type, party, amount, note) {
+      db.records.push({ id: uid(), type: type, date: day, partyId: party.id, partyName: party.name, amount: round2(amount), note: note || '', createdAt: now-- });
+    }
+    function cost(day, cat, amount, note) {
+      db.records.push({ id: uid(), type: 'expense', date: day, category: cat, amount: round2(amount), note: note || '', createdAt: now-- });
+    }
+
+    sale(d(0), c1, [{ name: '砂糖橘', unit: '斤', qty: 200, price: 4.5 }, { name: '香蕉', unit: '箱', qty: 10, price: 55 }], 0.5, '早上送货');
+    sale(d(0), c2, [{ name: '红富士苹果', unit: '斤', qty: 300, price: 6.2 }], 1, '现结');
+    sale(d(1), c4, [{ name: '阳光玫瑰葡萄', unit: '箱', qty: 12, price: 105 }], 0, '团购，月底结');
+    sale(d(1), c3, [{ name: '西瓜', unit: '斤', qty: 800, price: 2.1 }], 0.4, '');
+    sale(d(2), c5, [{ name: '沃柑', unit: '斤', qty: 150, price: 5.6 }], 1, '');
+    sale(d(3), c1, [{ name: '砂糖橘', unit: '斤', qty: 260, price: 4.4 }], 0.6, '补货');
+    sale(d(4), c2, [{ name: '香蕉', unit: '箱', qty: 20, price: 52 }], 0.5, '');
+
+    purchase(d(0), s1, [{ name: '红富士苹果', unit: '斤', qty: 500, price: 4.2 }], 0.6, '到货一车');
+    purchase(d(1), s2, [{ name: '砂糖橘', unit: '斤', qty: 1200, price: 3.1 }], 0.5, '');
+    purchase(d(3), s3, [{ name: '西瓜', unit: '斤', qty: 1000, price: 1.3 }], 1, '');
+
+    pay(d(2), 'receipt', c2, 1000, '微信转账');
+    pay(d(2), 'payment', s1, 800, '付定金');
+
+    cost(d(0), '运费', 260, '南宁—市场');
+    cost(d(0), '人工', 400, '装卸 2 人');
+    cost(d(2), '包装', 180, '纸箱 200 个');
+    cost(d(3), '损耗', 120, '烂果处理');
+
+    db.customers.forEach(function (x) {
+      db.records.forEach(function (r) { if (r.partyId === x.id && (!r.partyName || r.partyName !== x.name)) r.partyName = x.name; });
+    });
+    db.records.sort(sortRecords);
+    return db;
+  }
+
+  return {
+    DB_KEY: DB_KEY,
+    BACKUP_KEY: BACKUP_KEY,
+    UNITS: UNITS,
+    EXPENSE_CATS: EXPENSE_CATS,
+    TYPE_META: TYPE_META,
+    uid: uid,
+    num: num,
+    round2: round2,
+    fmtNum: fmtNum,
+    money: money,
+    today: today,
+    dateStr: dateStr,
+    parseDate: parseDate,
+    addDays: addDays,
+    monthRange: monthRange,
+    weekStart: weekStart,
+    weekdayCN: weekdayCN,
+    cnDate: cnDate,
+    emptyDB: emptyDB,
+    normalize: normalize,
+    sortRecords: sortRecords,
+    loadStorage: loadStorage,
+    saveStorage: saveStorage,
+    findParty: findParty,
+    partyBalance: partyBalance,
+    receivableTotal: receivableTotal,
+    prepaidTotal: prepaidTotal,
+    payableTotal: payableTotal,
+    partyList: partyList,
+    partyRecords: partyRecords,
+    unbilledList: unbilledList,
+    rangeStats: rangeStats,
+    expenseByCat: expenseByCat,
+    topProducts: topProducts,
+    topParties: topParties,
+    dailySeries: dailySeries,
+    statement: statement,
+    itemsText: itemsText,
+    toCSV: toCSV,
+    exportJSON: exportJSON,
+    importJSON: importJSON,
+    demoDB: demoDB
+  };
+});
+
+</script>
+  <script>
+/* 水果记账本 —— 交互层 */
+(function () {
+  'use strict';
+
+  var S = window.SGStore;
+  var db = S.loadStorage();
+  var money = S.money;
+
+  // 检查浏览器是否允许本地存储（有些环境下 file:// 会被禁用）
+  var storageOK = (function () {
+    try {
+      if (typeof localStorage === 'undefined') return false;
+      localStorage.setItem('__sgjz_probe', '1');
+      localStorage.removeItem('__sgjz_probe');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  })();
+
+  var ui = {
+    tab: 'home',
+    partyKind: 'customer',
+    billRange: 'month',
+    billType: 'all',
+    statRange: 'month',
+    onSheetClose: null
+  };
+
+  /* ================= 小工具 ================= */
+
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  function toast(msg) {
+    var root = $('#toastRoot');
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    root.appendChild(el);
+    setTimeout(function () {
+      el.style.transition = 'opacity .25s';
+      el.style.opacity = '0';
+      setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 260);
+    }, 1700);
+  }
+
+  function download(filename, content, mime) {
+    var blob = new Blob([content], { type: mime || 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+      if (a.parentNode) a.parentNode.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 800);
+  }
+
+  function stamp() {
+    var d = new Date();
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+
+  /* ================= 图标 ================= */
+
+  var ICONS = {
+    home: '<path d="M3.5 10.6 12 3.4l8.5 7.2"/><path d="M5.8 9.4V20.2h12.4V9.4"/>',
+    list: '<path d="M4.5 6.5h15M4.5 12h15M4.5 17.5h9"/>',
+    users: '<circle cx="9.2" cy="8.4" r="3.2"/><path d="M3.2 20c0-3.4 2.7-5.6 6-5.6s6 2.2 6 5.6"/><path d="M16.2 5.6a3 3 0 0 1 0 5.9M17.5 14.8c2.1.6 3.4 2.3 3.4 4.4"/>',
+    chart: '<path d="M4 20.2V11M9.3 20.2V4.4M14.6 20.2v-6.4M20 20.2H2.6"/>',
+    grid: '<rect x="3.6" y="3.6" width="7" height="7" rx="1.8"/><rect x="13.4" y="3.6" width="7" height="7" rx="1.8"/><rect x="3.6" y="13.4" width="7" height="7" rx="1.8"/><rect x="13.4" y="13.4" width="7" height="7" rx="1.8"/>',
+    plus: '<path d="M12 5.5v13M5.5 12h13"/>',
+    close: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+    trash: '<path d="M4 7h16M9.2 7V4.6h5.6V7M6.6 7l.9 12.4h9l.9-12.4"/>',
+    print: '<path d="M7 9.2V3.6h10v5.6"/><rect x="3.4" y="9.2" width="17.2" height="7.4" rx="2"/><path d="M7 16.6h10V20.4H7z"/>',
+    download: '<path d="M12 3.4v10.9m0 0 3.8-3.8m-3.8 3.8L8.2 10.5"/><path d="M4.4 17.2v3.4h15.2v-3.4"/>',
+    upload: '<path d="M12 14.4V3.5m0 0 3.8 3.8M12 3.5 8.2 7.3"/><path d="M4.4 17.2v3.4h15.2v-3.4"/>',
+    gear: '<circle cx="12" cy="12" r="3.1"/><path d="M12 3.2v2.2M12 18.6v2.2M4.8 12H2.6M21.4 12h-2.2M6.9 6.9 5.3 5.3M18.7 18.7l-1.6-1.6M17.1 6.9l1.6-1.6M5.3 18.7l1.6-1.6"/>',
+    arrow: '<path d="M9 5.5l6.5 6.5L9 18.5"/>',
+    doc: '<path d="M6 3.4h8l4 4v13.2H6z"/><path d="M14 3.4v4h4M9 12h6M9 16h6"/>',
+    edit: '<path d="M4.5 19.5h4L19 9a2.1 2.1 0 0 0-3-3L4.5 17.5z"/>',
+    moon: '<path d="M20 14.4A8.4 8.4 0 0 1 9.6 4 8.4 8.4 0 1 0 20 14.4z"/>'
+  };
+
+  function icon(name) {
+    return '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">' + (ICONS[name] || '') + '</svg>';
+  }
+
+  /* ================= 导航 ================= */
+
+  var TABS = [
+    { id: 'home', name: '首页', icon: 'home' },
+    { id: 'bills', name: '账单', icon: 'list' },
+    { id: 'parties', name: '欠账', icon: 'users' },
+    { id: 'stats', name: '统计', icon: 'chart' },
+    { id: 'more', name: '我的', icon: 'grid' }
+  ];
+
+  function render(resetScroll) {
+    $('#shopName').textContent = db.settings.shopName || '我的水果批发';
+    var t = S.today();
+    $('#shopSub').textContent = S.cnDate(t) + ' ' + S.weekdayCN(t) + ' · 今天记了 ' + todayCount(t) + ' 笔';
+    $('#btnSettings').innerHTML = icon('gear');
+
+    $('#tabbar').innerHTML = TABS.map(function (tb) {
+      return '<button class="' + (ui.tab === tb.id ? 'active' : '') + '" data-act="tab" data-tab="' + tb.id + '" role="tab">' +
+        icon(tb.icon) + '<span>' + tb.name + '</span></button>';
+    }).join('');
+
+    var html = '';
+    if (ui.tab === 'home') html = viewHome();
+    else if (ui.tab === 'bills') html = viewBills();
+    else if (ui.tab === 'parties') html = viewParties();
+    else if (ui.tab === 'stats') html = viewStats();
+    else html = viewMore();
+    $('#view').innerHTML = html;
+
+    syncDatalists();
+    if (resetScroll) window.scrollTo(0, 0);
+  }
+
+  function todayCount(t) {
+    return db.records.filter(function (r) { return r.date === t; }).length;
+  }
+
+  function syncDatalists() {
+    $('#prodList').innerHTML = db.products.map(function (p) {
+      return '<option value="' + esc(p.name) + '">';
+    }).join('');
+    var names = db.customers.concat(db.suppliers).map(function (p) { return p.name; });
+    var seen = {};
+    $('#partyList').innerHTML = names.filter(function (n) {
+      if (seen[n]) return false;
+      seen[n] = 1; return true;
+    }).map(function (n) { return '<option value="' + esc(n) + '">'; }).join('');
+  }
+
+  function go(tab) {
+    ui.tab = tab;
+    render(true);
+  }
+
+  function commit() {
+    db.records.sort(S.sortRecords);
+    var ok = S.saveStorage(db);
+    if (!ok) toast('保存失败：浏览器存储空间可能已满');
+    render(false);
+  }
+
+  /* ================= 首页 ================= */
+
+  function quadItem(label, val, cls) {
+    return '<div class="quad-item"><span>' + label + '</span><b class="' + (cls || '') + '">' + val + '</b></div>';
+  }
+
+  function viewHome() {
+    var t = S.today();
+    var td = S.rangeStats(db, t, t);
+    var mr = S.monthRange(0);
+    var mo = S.rangeStats(db, mr[0], mr[1]);
+    var rec = S.receivableTotal(db);
+    var pay = S.payableTotal(db);
+    var debtors = S.unbilledList(db, 'customer').length;
+    var payables = S.unbilledList(db, 'supplier').length;
+
+    var h = '';
+
+    if (!storageOK) {
+      h += '<div class="card" style="background:#fff4f3;box-shadow:none;border:1px solid #f3cfcc">' +
+        '<div style="font-size:14px;font-weight:700;color:#c8403a">⚠️ 这台设备存不了数据</div>' +
+        '<div style="font-size:12px;color:#7a5a58;line-height:1.7;margin-top:4px">' +
+        '浏览器禁止了本地存储，记的账关掉页面就会丢。请换用 Chrome / Edge 打开，' +
+        '或把文件放到本地服务里访问。</div></div>';
+    }
+
+    h += '<section class="card hero">' +
+      '<div class="hero-top"><span>今日卖货</span><span>' + S.cnDate(t) + ' ' + S.weekdayCN(t) + '</span></div>' +
+      '<div class="hero-num">' + money(td.sale) + '</div>' +
+      '<div class="hero-foot">' +
+        '<div><b>' + money(td.cashIn) + '</b><span>今日实收</span></div>' +
+        '<div><b>' + money(td.creditSale) + '</b><span>今日赊出</span></div>' +
+        '<div><b>' + td.saleCount + ' 单</b><span>今日笔数</span></div>' +
+      '</div></section>';
+
+    h += '<div class="quad">' +
+      quadItem('今日进货', money(td.purchase), 'warn') +
+      quadItem('今日支出', money(td.expense), 'neg') +
+      quadItem('本月卖货', money(mo.sale), '') +
+      quadItem('本月结余', money(mo.net), mo.net >= 0 ? 'pos' : 'neg') +
+      '</div>';
+
+    h += '<div class="quick">' +
+      '<button class="quick-btn q-sale" data-act="new-sale"><span class="qb-ic">' + icon('plus') + '</span>卖货</button>' +
+      '<button class="quick-btn q-buy" data-act="new-purchase"><span class="qb-ic">' + icon('download') + '</span>进货</button>' +
+      '<button class="quick-btn q-in" data-act="new-receipt"><span class="qb-ic">' + icon('upload') + '</span>收欠款</button>' +
+      '<button class="quick-btn q-out" data-act="new-expense"><span class="qb-ic">' + icon('doc') + '</span>记支出</button>' +
+      '</div>';
+
+    h += '<div class="card debt" data-act="go-parties">' +
+      '<div class="debt-item"><span>客户欠我（' + debtors + ' 家）</span><b class="neg">' + money(rec) + '</b></div>' +
+      '<div class="debt-item"><span>我欠供货商（' + payables + ' 家）</span><b class="warn">' + money(pay) + '</b></div>' +
+      '<span class="chev">' + icon('arrow') + '</span>' +
+      '</div>';
+
+    if (!db.records.length) {
+      h += '<div class="card"><div class="empty"><b>还没有账目</b>先添加几个客户和供货商，<br/>然后点「卖货」记第一笔。</div>' +
+        '<div style="display:flex;gap:10px;margin-top:4px">' +
+        '<button class="btn-ghost" style="flex:1" data-act="add-party">＋ 添加客户</button>' +
+        '<button class="btn-primary" style="flex:1" data-act="new-sale">开始记一笔</button>' +
+        '</div></div>';
+    } else {
+      h += '<div class="section-head"><h3>最近账单</h3><button class="link" data-act="tab" data-tab="bills">全部 ›</button></div>';
+      h += '<div class="list">' + db.records.slice(0, 5).map(recordRow).join('') + '</div>';
+    }
+
+    return h;
+  }
+
+  /* ================= 账单行 ================= */
+
+  function recordRow(r) {
+    var meta = S.TYPE_META[r.type] || {};
+    var title = '';
+    var sub = '';
+    var amt = '';
+    var cls = '';
+    var debtTag = '';
+
+    if (r.type === 'sale' || r.type === 'purchase') {
+      title = r.partyName || '散客';
+      sub = S.itemsText(r.items) || r.note || '';
+      var debt = S.round2(r.total - r.paid);
+      if (debt > 0.004) debtTag = '<em class="tag-debt">欠 ' + money(debt) + '</em>';
+      amt = money(r.total);
+      cls = r.type === 'sale' ? 'pos' : 'warn';
+    } else if (r.type === 'expense') {
+      title = r.category || '支出';
+      sub = r.note || '';
+      amt = money(r.amount);
+      cls = 'neg';
+    } else {
+      title = r.partyName || '—';
+      sub = r.note || (r.type === 'receipt' ? '客户还欠款' : '付给供货商');
+      amt = money(r.amount);
+      cls = r.type === 'receipt' ? 'pos' : 'neg';
+    }
+    if (sub === title) sub = '';
+
+    return '<div class="row" data-act="open-record" data-id="' + r.id + '">' +
+      '<span class="badge b-' + r.type + '">' + (meta.short || '') + '</span>' +
+      '<div class="row-main">' +
+        '<div class="row-title"><span class="t">' + esc(title) + '</span>' + debtTag + '</div>' +
+        (sub ? '<div class="row-sub">' + esc(sub) + '</div>' : '') +
+      '</div>' +
+      '<div class="row-amt ' + cls + '">' + amt + '</div>' +
+      '</div>';
+  }
+
+  /* ================= 账单页 ================= */
+
+  function resolveRange(preset) {
+    var t = S.today();
+    if (preset === 'today') return [t, t];
+    if (preset === 'week') return [S.weekStart(t), t];
+    if (preset === 'month') return S.monthRange(0);
+    if (preset === 'lastMonth') return S.monthRange(-1);
+    if (preset === 'year') return [t.slice(0, 4) + '-01-01', t.slice(0, 4) + '-12-31'];
+    return ['', ''];
+  }
+
+  function viewBills() {
+    var rg = resolveRange(ui.billRange);
+    var from = rg[0], to = rg[1];
+    var list = db.records.filter(function (r) {
+      if (from && r.date < from) return false;
+      if (to && r.date > to) return false;
+      if (ui.billType !== 'all' && r.type !== ui.billType) return false;
+      return true;
+    });
+
+    var income = 0, outcome = 0;
+    list.forEach(function (r) {
+      if (r.type === 'sale') income += S.num(r.total);
+      else if (r.type === 'receipt') income += S.num(r.amount);
+      else if (r.type === 'purchase' || r.type === 'expense' || r.type === 'payment') outcome += S.num(r.type === 'expense' ? r.amount : (r.total || r.amount));
+    });
+
+    var ranges = [['today', '今天'], ['week', '本周'], ['month', '本月'], ['lastMonth', '上月'], ['all', '全部']];
+    var types = [['all', '全部'], ['sale', '卖货'], ['purchase', '进货'], ['receipt', '收款'], ['payment', '付款'], ['expense', '支出']];
+
+    var h = '<div class="filters">';
+    h += '<div class="chips">' + ranges.map(function (x) {
+      return '<button class="chip ' + (ui.billRange === x[0] ? 'active' : '') + '" data-act="bill-range" data-v="' + x[0] + '">' + x[1] + '</button>';
+    }).join('') + '</div>';
+    h += '<div class="chips">' + types.map(function (x) {
+      return '<button class="chip ' + (ui.billType === x[0] ? 'active' : '') + '" data-act="bill-type" data-v="' + x[0] + '">' + x[1] + '</button>';
+    }).join('') + '</div>';
+    h += '</div>';
+
+    h += '<div class="sumline"><span>共 <b>' + list.length + '</b> 笔</span>' +
+      '<span>收入合计 <b class="pos">' + money(income) + '</b></span>' +
+      '<span>支出合计 <b class="neg">' + money(outcome) + '</b></span></div>';
+
+    if (!list.length) {
+      h += '<div class="card"><div class="empty"><b>这个范围没有账单</b>换个时间或类型试试</div></div>';
+      return h;
+    }
+
+    var groups = [];
+    var lastDate = null;
+    list.forEach(function (r) {
+      if (r.date !== lastDate) {
+        groups.push({ date: r.date, rows: [] });
+        lastDate = r.date;
+      }
+      groups[groups.length - 1].rows.push(r);
+    });
+
+    groups.forEach(function (g) {
+      var dayIn = 0, dayOut = 0;
+      g.rows.forEach(function (r) {
+        if (r.type === 'sale') dayIn += S.num(r.total);
+        else if (r.type === 'purchase' || r.type === 'expense') dayOut += S.num(r.total || r.amount);
+        else if (r.type === 'receipt') dayIn += S.num(r.amount);
+        else if (r.type === 'payment') dayOut += S.num(r.amount);
+      });
+      h += '<div class="day-head"><span>' + S.cnDate(g.date) + ' ' + S.weekdayCN(g.date) + '</span>' +
+        '<span>收 ' + money(dayIn) + ' · 支 ' + money(dayOut) + '</span></div>';
+      h += '<div class="list">' + g.rows.map(recordRow).join('') + '</div>';
+    });
+
+    return h;
+  }
+
+  /* ================= 往来单位 ================= */
+
+  function viewParties() {
+    var kind = ui.partyKind;
+    var isC = kind === 'customer';
+    var list = S.partyList(db, kind);
+    var total = isC ? S.receivableTotal(db) : S.payableTotal(db);
+    var count = list.filter(function (p) { return S.round2(p.balance) > 0; }).length;
+
+    var h = '<div class="segmented">' +
+      '<button class="' + (isC ? 'active' : '') + '" data-act="party-kind" data-v="customer">客户欠我</button>' +
+      '<button class="' + (!isC ? 'active' : '') + '" data-act="party-kind" data-v="supplier">我欠供货商</button>' +
+      '</div>';
+
+    h += '<div class="card" style="display:flex;align-items:center">' +
+      '<div style="flex:1">' +
+        '<div style="font-size:12px;color:var(--muted)">' + (isC ? '应收合计' : '应付合计') + ' · ' + count + ' 家未结清</div>' +
+        '<div style="font-size:28px;font-weight:800;font-variant-numeric:tabular-nums" class="' + (isC ? 'neg' : 'warn') + '">' + money(total) + '</div>' +
+      '</div>' +
+      '<button class="btn-ghost" data-act="add-party">＋ 新增</button>' +
+      '</div>';
+
+    if (!list.length) {
+      h += '<div class="card"><div class="empty"><b>还没有' + (isC ? '客户' : '供货商') + '</b>记第一笔账时会自动创建，<br/>也可以点右上角「新增」。</div></div>';
+      return h;
+    }
+
+    h += '<div class="list">' + list.map(function (p) {
+      var bal = S.round2(p.balance);
+      var balCls = bal > 0 ? (isC ? 'neg' : 'warn') : 'muted';
+      var balTxt = bal === 0 ? '已结清' : money(Math.abs(bal));
+      var subTxt = p.phone || p.note || '';
+      if (bal < 0) subTxt = (isC ? '预存 ' : '预付 ') + money(-bal);
+      return '<div class="party-row" data-act="open-party" data-kind="' + kind + '" data-id="' + p.id + '">' +
+        '<span class="avatar">' + esc(p.name.slice(0, 1)) + '</span>' +
+        '<div class="party-main">' +
+          '<div class="party-name">' + esc(p.name) + '</div>' +
+          '<div class="party-sub">' + esc(subTxt || (p.lastDate ? '最近 ' + S.cnDate(p.lastDate) : '还没有往来')) + '</div>' +
+        '</div>' +
+        '<div class="party-amt"><b class="' + balCls + '">' + balTxt + '</b><span>' + (bal === 0 ? '' : (isC ? '欠款' : '应付')) + '</span></div>' +
+        '</div>';
+    }).join('') + '</div>';
+
+    return h;
+  }
+
+  /* ================= 统计 ================= */
+
+  function viewStats() {
+    var rg = resolveRange(ui.statRange);
+    var st = S.rangeStats(db, rg[0], rg[1]);
+    var cats = S.expenseByCat(db, rg[0], rg[1]);
+    var prods = S.topProducts(db, rg[0], rg[1], 5);
+    var custs = S.topParties(db, rg[0], rg[1], 'customer', 5);
+    var sFrom = rg[0] || S.addDays(S.today(), -29);
+    var sTo = rg[1] || S.today();
+    if (sTo > S.today()) sTo = S.today();
+    var series = S.dailySeries(db, sFrom, sTo);
+
+    var presets = [['month', '本月'], ['lastMonth', '上月'], ['week', '本周'], ['year', '今年'], ['all', '全部']];
+    var h = '<div class="chips">' + presets.map(function (x) {
+      return '<button class="chip ' + (ui.statRange === x[0] ? 'active' : '') + '" data-act="stat-range" data-v="' + x[0] + '">' + x[1] + '</button>';
+    }).join('') + '</div>';
+
+    h += '<div class="stat-grid">' +
+      '<div class="stat-cell"><span>卖货收入</span><b class="pos">' + money(st.sale) + '</b><i>' + st.saleCount + ' 单</i></div>' +
+      '<div class="stat-cell"><span>进货成本</span><b class="warn">' + money(st.purchase) + '</b><i>' + st.purchaseCount + ' 单</i></div>' +
+      '<div class="stat-cell"><span>其他费用</span><b class="neg">' + money(st.expense) + '</b><i>' + st.expenseCount + ' 笔</i></div>' +
+      '<div class="stat-cell"><span>本期结余</span><b class="' + (st.net >= 0 ? 'pos' : 'neg') + '">' + money(st.net) + '</b><i>卖货-进货-费用</i></div>' +
+      '</div>';
+
+    h += '<div class="card">' +
+      '<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--ink2)">' +
+      '<span>实际进账 <b class="pos">' + money(st.cashIn) + '</b></span>' +
+      '<span>实际出账 <b class="neg">' + money(st.cashOut) + '</b></span>' +
+      '<span>现金净流入 <b class="' + (st.cashBalance >= 0 ? 'pos' : 'neg') + '">' + money(st.cashBalance) + '</b></span>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px">' +
+      '<span>赊出去 ' + money(st.creditSale) + '</span>' +
+      '<span>欠供货商 ' + money(st.creditPurchase) + '</span>' +
+      '<span>毛利（未扣费用） ' + money(st.gross) + '</span>' +
+      '</div></div>';
+
+    if (series.length) {
+      var max = 1;
+      series.forEach(function (d) { max = Math.max(max, d.sale, d.purchase); });
+      h += '<div class="card"><div class="section-head" style="margin:0 0 6px"><h3>每天卖货 / 进货</h3></div>';
+      h += '<div class="chart">' + series.map(function (d, i) {
+        var sh = d.sale > 0 ? Math.max(3, Math.round(d.sale / max * 100)) : 0;
+        var ph = d.purchase > 0 ? Math.max(3, Math.round(d.purchase / max * 100)) : 0;
+        var showX = series.length <= 12 || i % 5 === 0 || i === series.length - 1;
+        return '<div class="chart-col"><div class="chart-bars">' +
+          '<i class="bar-sale" style="height:' + sh + '%"></i>' +
+          '<i class="bar-buy" style="height:' + ph + '%"></i>' +
+          '</div><div class="chart-x">' + (showX ? d.date.slice(8) : '') + '</div></div>';
+      }).join('') + '</div>';
+      h += '<div class="legend"><span><i class="bar-sale"></i>卖货</span><span><i class="bar-buy"></i>进货</span></div></div>';
+    }
+
+    if (prods.length) {
+      h += '<div class="card"><div class="section-head" style="margin:0 0 2px"><h3>卖得最多的水果</h3></div>';
+      var pmax = prods[0].amount || 1;
+      h += prods.map(function (p, i) {
+        return '<div class="rank-item' + (i < 3 ? ' top' + (i + 1) : '') + '"><span class="rank-no">' + (i + 1) + '</span>' +
+          '<div class="rank-main"><div class="rank-name">' + esc(p.name) + '</div>' +
+          '<div class="rank-bar"><i style="width:' + Math.round(p.amount / pmax * 100) + '%"></i></div></div>' +
+          '<div class="rank-val">' + money(p.amount) + '<small>' + S.fmtNum(p.qty) + p.unit + '</small></div></div>';
+      }).join('') + '</div>';
+    }
+
+    if (cats.length) {
+      h += '<div class="card"><div class="section-head" style="margin:0 0 2px"><h3>钱花在哪了</h3></div>';
+      cats.forEach(function (c) {
+        h += '<div class="kv"><span>' + esc(c.name) + '</span><b class="neg">' + money(c.amount) + '</b></div>';
+      });
+      h += '</div>';
+    }
+
+    if (custs.length) {
+      h += '<div class="card"><div class="section-head" style="margin:0 0 2px"><h3>进货最多的客户</h3></div>';
+      var cmax = custs[0].amount || 1;
+      h += custs.map(function (p, i) {
+        return '<div class="rank-item' + (i < 3 ? ' top' + (i + 1) : '') + '"><span class="rank-no">' + (i + 1) + '</span>' +
+          '<div class="rank-main"><div class="rank-name">' + esc(p.name) + '</div>' +
+          '<div class="rank-bar"><i style="width:' + Math.round(p.amount / cmax * 100) + '%"></i></div></div>' +
+          '<div class="rank-val">' + money(p.amount) + '<small>' + p.count + ' 单</small></div></div>';
+      }).join('') + '</div>';
+    }
+
+    if (!db.records.length) {
+      h += '<div class="card"><div class="empty"><b>还没有数据</b>记几笔账，这里就有图表了</div></div>';
+    }
+
+    return h;
+  }
+
+  /* ================= 我的 ================= */
+
+  function viewMore() {
+    var st = S.rangeStats(db, '', '');
+    var h = '';
+    h += '<div class="card" style="display:flex;align-items:center;gap:12px">' +
+      '<span class="avatar" style="width:46px;height:46px;border-radius:14px;font-size:18px">' + esc((db.settings.shopName || '水').slice(0, 1)) + '</span>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:16px;font-weight:700">' + esc(db.settings.shopName || '我的水果批发') + '</div>' +
+        '<div style="font-size:12px;color:var(--muted)">共 ' + db.records.length + ' 笔账 · ' + db.customers.length + ' 个客户 · ' + db.suppliers.length + ' 个供货商</div>' +
+      '</div>' +
+      '<button class="icon-btn" data-act="open-settings">' + icon('edit') + '</button>' +
+      '</div>';
+
+    h += '<div class="list-group">' +
+      row2('gear', '店铺设置', '店名、老板电话', 'open-settings') +
+      row2('download', '导出 Excel', 'CSV，电脑上直接打开', 'export-csv') +
+      row2('upload', '导出备份文件', 'JSON，换手机/防丢失', 'export-json') +
+      row2('doc', '导入备份', '从备份文件恢复', 'import-json') +
+      '</div>';
+
+    h += '<div class="list-group">' +
+      row2('users', '演示数据', '一键载入示例，先看看效果', 'load-demo') +
+      row2('trash', '清空所有数据', '不可恢复，请先导出备份', 'clear-all', 'danger') +
+      '</div>';
+
+    h += '<div class="card">' +
+      '<div class="kv"><span>累计卖货</span><b class="pos">' + money(st.sale) + '</b></div>' +
+      '<div class="kv"><span>累计进货</span><b class="warn">' + money(st.purchase) + '</b></div>' +
+      '<div class="kv"><span>累计费用</span><b class="neg">' + money(st.expense) + '</b></div>' +
+      '<div class="kv"><span>累计结余</span><b class="' + (st.net >= 0 ? 'pos' : 'neg') + '">' + money(st.net) + '</b></div>' +
+      '</div>';
+
+    h += '<div class="tips">数据只保存在这台设备的浏览器里，不会上传到任何服务器。<br/>换手机或清理浏览器前，请先「导出备份文件」。<br/>建议在手机浏览器里选择「添加到主屏幕」，用起来和 App 一样。</div>';
+    return h;
+  }
+
+  function row2(ic, title, sub, act, cls) {
+    var danger = cls === 'danger';
+    return '<div class="group-row" data-act="' + act + '">' +
+      '<span class="gr-ic" style="background:' + (danger ? 'var(--red-soft);color:var(--red)' : 'var(--green-soft);color:var(--green)') + '">' + icon(ic) + '</span>' +
+      '<div class="gr-main"><div class="' + (danger ? 'danger' : '') + '">' + title + '</div>' +
+      '<div class="gr-sub">' + sub + '</div></div>' +
+      '<span class="chev">' + icon('arrow') + '</span></div>';
+  }
+
+  /* ================= 弹层基础 ================= */
+
+  function openSheet(opts) {
+    var root = $('#sheetRoot');
+    root.innerHTML =
+      '<div class="sheet-mask" data-act="close-sheet"></div>' +
+      '<div class="sheet" role="dialog" aria-modal="true">' +
+        '<div class="sheet-head"><h2>' + esc(opts.title) + '</h2>' +
+          '<button class="icon-btn" data-act="close-sheet">' + icon('close') + '</button></div>' +
+        '<div class="sheet-body">' + opts.body + '</div>' +
+        (opts.foot ? '<div class="sheet-foot">' + opts.foot + '</div>' : '') +
+      '</div>';
+    root.classList.add('open');
+    document.body.classList.add('no-scroll');
+    if (opts.after) opts.after();
+  }
+
+  function closeSheet() {
+    var root = $('#sheetRoot');
+    root.classList.remove('open');
+    root.innerHTML = '';
+    document.body.classList.remove('no-scroll');
+    var cb = ui.onSheetClose;
+    ui.onSheetClose = null;
+    if (cb) cb();
+  }
+
+  function confirmSheet(msg, okText) {
+    return new Promise(function (resolve) {
+      var settled = false;
+      function finish(v) {
+        if (settled) return;
+        settled = true;
+        ui.onSheetClose = null;
+        closeSheet();
+        resolve(v);
+      }
+      openSheet({
+        title: '请确认',
+        body: '<div style="padding:18px 8px 26px;text-align:center;font-size:15px;line-height:1.7">' + msg + '</div>',
+        foot: '<button class="btn-ghost" data-act="close-sheet" style="flex:1">取消</button>' +
+          '<button class="btn-primary" id="confirmOk" style="flex:1">' + (okText || '确定') + '</button>'
+      });
+      ui.onSheetClose = function () { finish(false); };
+      $('#confirmOk').addEventListener('click', function () { finish(true); });
+    });
+  }
+
+  /* ================= 记账表单 ================= */
+
+  function blankItem() { return { name: '', unit: '斤', qty: '', price: '' }; }
+
+  function unitOptions(cur) {
+    var list = S.UNITS.slice();
+    if (cur && list.indexOf(cur) < 0) list.unshift(cur);
+    return list.map(function (u) {
+      return '<option value="' + u + '"' + (u === (cur || '斤') ? ' selected' : '') + '>' + u + '</option>';
+    }).join('');
+  }
+
+  function itemRowHTML(it) {
+    return '<div class="item-row">' +
+      '<div class="ir-line">' +
+        '<input class="ir-name" list="prodList" placeholder="水果名，如 砂糖橘" value="' + esc(it.name) + '">' +
+        '<button class="ir-del" data-act="del-item" aria-label="删除这一行">' + icon('close') + '</button>' +
+      '</div>' +
+      '<div class="ir-grid">' +
+        '<label class="ir-cell"><span>数量</span><input class="ir-qty" inputmode="decimal" placeholder="0" value="' + esc(it.qty) + '"></label>' +
+        '<label class="ir-cell"><span>单位</span><select class="ir-unit">' + unitOptions(it.unit) + '</select></label>' +
+        '<label class="ir-cell"><span>单价</span><input class="ir-price" inputmode="decimal" placeholder="0" value="' + esc(it.price) + '"></label>' +
+        '<div class="ir-amt"><span>金额</span><b>¥0</b></div>' +
+      '</div>' +
+      '</div>';
+  }
+
+  function productChipsHTML() {
+    var list = db.products.slice().sort(function (a, b) { return (b.lastUsedAt || 0) - (a.lastUsedAt || 0); }).slice(0, 10);
+    if (!list.length) return '';
+    return '<div class="common-strip">' + list.map(function (p) {
+      return '<button class="pchip" data-act="pick-product" data-name="' + esc(p.name) + '">' + esc(p.name) +
+        '<b>' + (p.price ? ' ¥' + S.fmtNum(p.price) : '') + '</b></button>';
+    }).join('') + '</div>';
+  }
+
+  /* iPhone 的 Safari 不支持 datalist 下拉候选，用这排按钮代替 */
+  function partyChipsHTML(kind, targetId) {
+    var list = S.partyList(db, kind).slice();
+    list.sort(function (a, b) {
+      if (a.lastDate === b.lastDate) return Math.abs(b.balance) - Math.abs(a.balance);
+      return (a.lastDate || '') < (b.lastDate || '') ? 1 : -1;
+    });
+    list = list.slice(0, 8);
+    if (!list.length) return '';
+    return '<div class="common-strip">' + list.map(function (p) {
+      return '<button class="pchip" data-act="pick-party" data-for="' + targetId + '" data-name="' + esc(p.name) + '">' +
+        esc(p.name) + (Math.abs(p.balance) > 0 ? '<b>' + S.fmtNum(Math.abs(p.balance)) + '</b>' : '') + '</button>';
+    }).join('') + '</div>';
+  }
+
+  function stripHTML(label, chips) {
+    if (!chips) return '';
+    return '<div class="strip-block"><span class="strip-label">' + label + '</span>' + chips + '</div>';
+  }
+
+  function openEntry(type, rec) {
+    var isSale = type === 'sale';
+    var kind = isSale ? 'customer' : 'supplier';
+    var parties = kind === 'customer' ? db.customers : db.suppliers;
+    var items = rec ? clone(rec.items) : [blankItem()];
+    var body = '';
+
+    body += '<div class="form">';
+    body += '<div class="row-2">' +
+      '<label class="field"><span>日期</span><input id="f-date" type="date" value="' + (rec ? rec.date : S.today()) + '"></label>' +
+      '<label class="field"><span>' + (isSale ? '客户' : '供货商') + '</span>' +
+        '<input id="f-party" list="partyList" placeholder="输入或选择" value="' + esc(rec ? rec.partyName : '') + '"></label>' +
+      '</div>';
+
+    if (!parties.length) {
+      body += '<div style="font-size:12px;color:var(--muted);padding:0 2px">还没有' + (isSale ? '客户' : '供货商') + '，直接输入名字就行，会自动建好。</div>';
+    }
+
+    body += stripHTML(isSale ? '常来的客户' : '常来的供货商', partyChipsHTML(kind, 'f-party'));
+
+    body += '<div class="field-block">' +
+      '<div class="block-head"><span>商品明细</span><button class="mini-btn" data-act="add-item">＋ 加一行</button></div>' +
+      '<div id="items">' + items.map(itemRowHTML).join('') + '</div>' +
+      '</div>';
+
+    body += stripHTML('常卖的水果', productChipsHTML());
+
+    body += '<div class="sum-card">' +
+      '<div class="sum-line"><span>合计</span><b id="f-total">¥0</b></div>' +
+      '<div class="sum-line"><span>本次' + (isSale ? '收款' : '付款') + '</span>' +
+        '<input id="f-paid" inputmode="decimal" placeholder="' + (isSale ? '不填=全款' : '不填=全付') + '"></div>' +
+      '<div class="pay-actions">' +
+        '<button data-act="pay-all" class="primary">全款收清</button>' +
+        '<button data-act="pay-none">先欠着</button>' +
+      '</div>' +
+      '<div class="sum-line debt-line"><span>' + (isSale ? '客户欠' : '我欠他') + '</span><b id="f-debt">¥0</b></div>' +
+      '</div>';
+
+    body += '<label class="field"><span>备注</span><input id="f-note" placeholder="选填，如：早上送货、微信转" value="' + esc(rec ? rec.note : '') + '"></label>';
+    body += '</div>';
+
+    var foot = (rec ? '<button class="btn-ghost sq danger" data-act="del-record" data-id="' + rec.id + '">' + icon('trash') + '</button>' : '') +
+      '<button class="btn-primary" data-act="save-entry" data-type="' + type + '" data-id="' + (rec ? rec.id : '') + '">保存</button>';
+
+    var title = (rec ? '编辑' : '记一笔') + (isSale ? '卖货' : '进货');
+    openSheet({
+      title: title,
+      body: body,
+      foot: foot,
+      after: function () {
+        if (rec && rec.paid !== rec.total) {
+          $('#f-paid').value = S.fmtNum(rec.paid);
+        }
+        recalcEntry();
+        if (!rec) $('#f-party').focus();
+      }
+    });
+    ui.entryType = type;
+  }
+
+  function recalcEntry() {
+    var sheet = $('#sheetRoot');
+    var total = 0;
+    $$('#items .item-row', sheet).forEach(function (row) {
+      var q = S.num($('.ir-qty', row).value);
+      var p = S.num($('.ir-price', row).value);
+      var a = S.round2(q * p);
+      $('.ir-amt b', row).textContent = money(a);
+      total += a;
+    });
+    total = S.round2(total);
+    var totalEl = $('#f-total', sheet);
+    if (!totalEl) return;
+    totalEl.textContent = money(total);
+
+    var paidInput = $('#f-paid', sheet);
+    var raw = paidInput.value.trim();
+    var paid = raw === '' ? total : S.num(raw);
+    var debt = S.round2(total - paid);
+    $('#f-debt', sheet).textContent = money(debt);
+    $('#f-debt', sheet).className = debt > 0 ? 'neg' : 'pos';
+  }
+
+  function readEntryForm() {
+    var sheet = $('#sheetRoot');
+    var date = $('#f-date', sheet).value || S.today();
+    var partyName = $('#f-party', sheet).value.trim();
+    var items = [];
+    $$('#items .item-row', sheet).forEach(function (row) {
+      var name = $('.ir-name', row).value.trim();
+      var unit = $('.ir-unit', row).value;
+      var qty = S.num($('.ir-qty', row).value);
+      var price = S.num($('.ir-price', row).value);
+      if (!name && !qty && !price) return;
+      items.push({ name: name || '未命名', unit: unit, qty: qty, price: price, amount: S.round2(qty * price) });
+    });
+    var total = S.round2(items.reduce(function (s, it) { return s + it.amount; }, 0));
+    var raw = $('#f-paid', sheet).value.trim();
+    var paid = raw === '' ? total : S.round2(S.num(raw));
+    return {
+      date: date,
+      partyName: partyName,
+      items: items,
+      total: total,
+      paid: paid,
+      note: $('#f-note', sheet).value.trim()
+    };
+  }
+
+  function resolveParty(kind, name) {
+    name = (name || '').trim();
+    if (!name) return { id: '', name: '' };
+    var list = kind === 'customer' ? db.customers : db.suppliers;
+    for (var i = 0; i < list.length; i++) if (list[i].name === name) return list[i];
+    var p = { id: S.uid(), name: name, phone: '', note: '', opening: 0, createdAt: Date.now() };
+    list.push(p);
+    return p;
+  }
+
+  function upsertProduct(it) {
+    if (!it.name || it.name === '未命名') return;
+    for (var i = 0; i < db.products.length; i++) {
+      if (db.products[i].name === it.name) {
+        db.products[i].unit = it.unit;
+        if (it.price) db.products[i].price = it.price;
+        db.products[i].lastUsedAt = Date.now();
+        return;
+      }
+    }
+    db.products.push({ id: S.uid(), name: it.name, unit: it.unit, price: it.price || 0, lastUsedAt: Date.now() });
+  }
+
+  function saveEntry(type, editId) {
+    var payload = readEntryForm();
+    if (!payload.items.length) { toast('请先填写水果名和数量'); return; }
+    if (payload.total <= 0) { toast('金额是 0，检查一下数量和单价'); return; }
+
+    var isSale = type === 'sale';
+    var party = resolveParty(isSale ? 'customer' : 'supplier', payload.partyName);
+    var rec = {
+      id: editId || S.uid(),
+      type: type,
+      date: payload.date,
+      partyId: party.id,
+      partyName: party.name,
+      items: payload.items,
+      total: payload.total,
+      paid: payload.paid,
+      note: payload.note,
+      createdAt: Date.now()
+    };
+    if (editId) {
+      for (var i = 0; i < db.records.length; i++) {
+        if (db.records[i].id === editId) {
+          rec.createdAt = db.records[i].createdAt;
+          db.records[i] = rec;
+          break;
+        }
+      }
+    } else {
+      db.records.push(rec);
+    }
+    payload.items.forEach(upsertProduct);
+    commit();
+    closeSheet();
+    toast((editId ? '已修改 ' : '已记上 ') + money(payload.total) + (payload.total - payload.paid > 0.004 ? '，欠 ' + money(payload.total - payload.paid) : ''));
+  }
+
+  /* ================= 收款 / 付款 ================= */
+
+  function openSettle(kind, partyId, rec) {
+    var isC = kind === 'customer';
+    var p = rec ? S.findParty(db, kind, rec.partyId) : (partyId ? S.findParty(db, kind, partyId) : null);
+    var bal = p ? S.partyBalance(db, kind, p.id) : 0;
+
+    var body = '<div class="form">' +
+      '<div class="row-2">' +
+      '<label class="field"><span>日期</span><input id="s-date" type="date" value="' + (rec ? rec.date : S.today()) + '"></label>' +
+      '<label class="field"><span>' + (isC ? '客户' : '供货商') + '</span>' +
+        '<input id="s-party" list="partyList" placeholder="输入或选择" value="' + esc(rec ? rec.partyName : (p ? p.name : '')) + '"></label>' +
+      '</div>' +
+      stripHTML(isC ? '常来的客户' : '常来的供货商', partyChipsHTML(kind, 's-party')) +
+      '<div class="sum-card">' +
+        '<div class="sum-line"><span>' + (isC ? '当前欠款' : '当前应付') + '</span><b id="s-bal">' + money(bal) + '</b></div>' +
+        '<div class="sum-line"><span>本次' + (isC ? '收到' : '付出') + '</span>' +
+          '<input id="s-amount" inputmode="decimal" placeholder="0" value="' + (rec ? S.fmtNum(rec.amount) : '') + '"></div>' +
+        '<div class="pay-actions"><button data-act="settle-all">全额结清</button></div>' +
+      '</div>' +
+      '<label class="field"><span>备注</span><input id="s-note" placeholder="选填，如：微信转账、现金" value="' + esc(rec ? rec.note : '') + '"></label>' +
+      '</div>';
+
+    openSheet({
+      title: (rec ? '修改' : '记一笔') + (isC ? '收款' : '付款'),
+      body: body,
+      foot: (rec ? '<button class="btn-ghost sq danger" data-act="del-record" data-id="' + rec.id + '">' + icon('trash') + '</button>' : '') +
+        '<button class="btn-primary" data-act="save-settle" data-kind="' + kind + '" data-id="' + (rec ? rec.id : '') + '">保存</button>',
+      after: function () { $('#s-amount').focus(); }
+    });
+  }
+
+  function saveSettle(kind, editId) {
+    var isC = kind === 'customer';
+    var partyName = $('#s-party').value.trim();
+    var amount = S.round2(S.num($('#s-amount').value));
+    var note = $('#s-note').value.trim();
+    var date = $('#s-date').value || S.today();
+    if (!partyName) { toast('请先选择' + (isC ? '客户' : '供货商')); return; }
+    if (amount <= 0) { toast('金额要大于 0'); return; }
+    var party = resolveParty(kind, partyName);
+    var rec = {
+      id: editId || S.uid(),
+      type: isC ? 'receipt' : 'payment',
+      date: date,
+      partyId: party.id,
+      partyName: party.name,
+      amount: amount,
+      note: note,
+      createdAt: Date.now()
+    };
+    if (editId) {
+      for (var i = 0; i < db.records.length; i++) {
+        if (db.records[i].id === editId) { rec.createdAt = db.records[i].createdAt; db.records[i] = rec; break; }
+      }
+    } else {
+      db.records.push(rec);
+    }
+    commit();
+    closeSheet();
+    toast((editId ? '已修改 ' : (isC ? '已记录收款 ' : '已记录付款 ')) + money(amount));
+  }
+
+  function updateSettleBalance() {
+    var el = $('#s-party');
+    var balEl = $('#s-bal');
+    if (!el || !balEl) return;
+    var name = el.value.trim();
+    var found = null;
+    db.customers.concat(db.suppliers).forEach(function (x) { if (x.name === name) found = x; });
+    if (!found) { balEl.textContent = '¥0'; return; }
+    var kk = db.customers.indexOf(found) >= 0 ? 'customer' : 'supplier';
+    balEl.textContent = money(S.partyBalance(db, kk, found.id));
+  }
+
+  /* ================= 支出 ================= */
+
+  function openExpense(rec) {
+    var cats = S.EXPENSE_CATS;
+    var body = '<div class="form">' +
+      '<div class="row-2">' +
+      '<label class="field"><span>日期</span><input id="e-date" type="date" value="' + (rec ? rec.date : S.today()) + '"></label>' +
+      '<label class="field"><span>金额</span><input id="e-amount" inputmode="decimal" placeholder="0" value="' + (rec ? S.fmtNum(rec.amount) : '') + '"></label>' +
+      '</div>' +
+      '<div class="field-block"><div class="block-head"><span>花在哪</span></div>' +
+        '<div class="chips" id="e-cats">' + cats.map(function (c) {
+          return '<button class="chip ' + (rec && rec.category === c ? 'active' : (!rec && c === '运费' ? 'active' : '')) + '" data-act="pick-cat" data-v="' + c + '">' + c + '</button>';
+        }).join('') + '</div>' +
+      '</div>' +
+      '<label class="field"><span>备注</span><input id="e-note" placeholder="选填" value="' + esc(rec ? rec.note : '') + '"></label>' +
+      '</div>';
+
+    openSheet({
+      title: rec ? '编辑支出' : '记一笔支出',
+      body: body,
+      foot: (rec ? '<button class="btn-ghost sq danger" data-act="del-record" data-id="' + rec.id + '">' + icon('trash') + '</button>' : '') +
+        '<button class="btn-primary" data-act="save-expense" data-id="' + (rec ? rec.id : '') + '">保存</button>',
+      after: function () { $('#e-amount').focus(); }
+    });
+    ui.expenseCat = rec ? rec.category : '运费';
+  }
+
+  function saveExpense(editId) {
+    var amount = S.round2(S.num($('#e-amount').value));
+    if (amount <= 0) { toast('请填写金额'); return; }
+    var rec = {
+      id: editId || S.uid(),
+      type: 'expense',
+      date: $('#e-date').value || S.today(),
+      category: ui.expenseCat || '其他',
+      amount: amount,
+      note: $('#e-note').value.trim(),
+      createdAt: Date.now()
+    };
+    if (editId) {
+      for (var i = 0; i < db.records.length; i++) {
+        if (db.records[i].id === editId) { rec.createdAt = db.records[i].createdAt; db.records[i] = rec; break; }
+      }
+    } else {
+      db.records.push(rec);
+    }
+    commit();
+    closeSheet();
+    toast('已记支出 ' + money(amount));
+  }
+
+  /* ================= 账单详情 ================= */
+
+  function openRecord(id) {
+    var r = null;
+    for (var i = 0; i < db.records.length; i++) if (db.records[i].id === id) r = db.records[i];
+    if (!r) return;
+    var meta = S.TYPE_META[r.type];
+    var body = '';
+
+    body += '<div class="detail-hero"><div class="dh-label">' + meta.long + ' · ' + S.cnDate(r.date) + ' ' + S.weekdayCN(r.date) + '</div>' +
+      '<div class="dh-num ' + (r.type === 'sale' || r.type === 'receipt' ? 'pos' : 'neg') + '">' +
+      money(r.type === 'sale' || r.type === 'purchase' ? r.total : r.amount) + '</div>' +
+      (r.partyName ? '<div class="dh-sub">' + esc(r.partyName) + '</div>' : '') +
+      '</div>';
+
+    body += '<div class="card">';
+    if (r.type === 'sale' || r.type === 'purchase') {
+      (r.items || []).forEach(function (it) {
+        body += '<div class="kv"><span>' + esc(it.name) + '　' + S.fmtNum(it.qty) + it.unit + ' × ¥' + S.fmtNum(it.price) + '</span><b>' + money(it.amount) + '</b></div>';
+      });
+      body += '<div class="kv"><span>合计</span><b>' + money(r.total) + '</b></div>';
+      body += '<div class="kv"><span>' + (r.type === 'sale' ? '已收' : '已付') + '</span><b>' + money(r.paid) + '</b></div>';
+      var debt = S.round2(r.total - r.paid);
+      body += '<div class="kv"><span>' + (r.type === 'sale' ? '客户还欠' : '还欠对方') + '</span><b class="' + (debt > 0 ? 'neg' : 'pos') + '">' + money(debt) + '</b></div>';
+    } else if (r.type === 'expense') {
+      body += '<div class="kv"><span>类别</span><b>' + esc(r.category) + '</b></div>';
+      body += '<div class="kv"><span>金额</span><b>' + money(r.amount) + '</b></div>';
+    } else {
+      body += '<div class="kv"><span>' + (r.type === 'receipt' ? '收到' : '付出') + '</span><b>' + money(r.amount) + '</b></div>';
+    }
+    if (r.note) body += '<div class="kv"><span>备注</span><b>' + esc(r.note) + '</b></div>';
+    body += '<div class="kv"><span>记录时间</span><b>' + new Date(r.createdAt).toLocaleString('zh-CN', { hour12: false }).slice(0, 16) + '</b></div>';
+    body += '</div>';
+
+    openSheet({
+      title: meta.label,
+      body: body,
+      foot: '<button class="btn-ghost sq danger" data-act="del-record" data-id="' + r.id + '">' + icon('trash') + '</button>' +
+        '<button class="btn-ghost" data-act="edit-record" data-id="' + r.id + '" style="flex:1">修改</button>' +
+        '<button class="btn-primary" data-act="close-sheet" style="flex:1">完成</button>'
+    });
+  }
+
+  function delRecord(id) {
+    confirmSheet('确定删除这笔记录吗？<br/><span style="font-size:13px;color:#8b968f">删除后不能恢复</span>', '删除').then(function (ok) {
+      if (!ok) return;
+      db.records = db.records.filter(function (r) { return r.id !== id; });
+      commit();
+      toast('已删除');
+    });
+  }
+
+  /* ================= 往来单位详情 ================= */
+
+  function openParty(kind, id) {
+    var p = S.findParty(db, kind, id);
+    if (!p) return;
+    var isC = kind === 'customer';
+    var bal = S.partyBalance(db, kind, id);
+    var recs = S.partyRecords(db, kind, id);
+    var body = '';
+
+    body += '<div class="detail-hero"><div class="dh-label">' + (isC ? '客户欠我' : '我欠供货商') + '</div>' +
+      '<div class="dh-num ' + (bal > 0 ? (isC ? 'neg' : 'warn') : 'muted') + '">' + money(Math.abs(bal)) + '</div>' +
+      '<div class="dh-sub">' + (bal === 0 ? '已结清 ✓' : (bal > 0 ? '还有 ' + money(bal) + ' 没结' : (isC ? '客户预存 ' : '已预付 ') + money(-bal))) + '</div></div>';
+
+    body += '<div class="detail-actions">' +
+      '<button class="primary" data-act="new-settle" data-kind="' + kind + '" data-id="' + id + '">' + (isC ? '记一笔收款' : '记一笔付款') + '</button>' +
+      '<button data-act="open-stmt" data-kind="' + kind + '" data-id="' + id + '">对账单</button>' +
+      '</div>';
+
+    body += '<div class="card" style="padding:4px 14px">' +
+      '<div class="kv"><span>电话</span><b>' + (p.phone ? esc(p.phone) : '—') + '</b></div>' +
+      '<div class="kv"><span>期初' + (isC ? '欠款' : '应付') + '</span><b>' + money(p.opening) + '</b></div>' +
+      '<div class="kv"><span>往来笔数</span><b>' + recs.length + ' 笔</b></div>' +
+      '</div>';
+
+    body += '<div class="section-head"><h3>往来记录</h3></div>';
+    if (!recs.length) {
+      body += '<div class="card"><div class="empty">还没有往来记录</div></div>';
+    } else {
+      body += '<div class="list">' + recs.map(recordRow).join('') + '</div>';
+    }
+
+    openSheet({
+      title: p.name,
+      body: body,
+      foot: '<button class="btn-ghost" data-act="edit-party" data-kind="' + kind + '" data-id="' + id + '" style="flex:1">编辑</button>' +
+        '<button class="btn-primary" data-act="new-settle" data-kind="' + kind + '" data-id="' + id + '">' + (isC ? '收款' : '付款') + '</button>'
+    });
+  }
+
+  function openPartyForm(kind, id) {
+    var p = id ? S.findParty(db, kind, id) : null;
+    var isC = kind === 'customer';
+    var body = '<div class="form">' +
+      '<label class="field"><span>' + (isC ? '客户' : '供货商') + '名称</span>' +
+        '<input id="p-name" placeholder="如：老王水果店" value="' + esc(p ? p.name : '') + '"></label>' +
+      '<label class="field"><span>电话</span><input id="p-phone" inputmode="tel" placeholder="选填" value="' + esc(p ? p.phone : '') + '"></label>' +
+      '<label class="field"><span>期初' + (isC ? '欠款（他欠我多少）' : '应付（我欠他多少）') + '</span>' +
+        '<input id="p-opening" inputmode="decimal" placeholder="0，没有就留空" value="' + (p && p.opening ? S.fmtNum(p.opening) : '') + '"></label>' +
+      '<label class="field"><span>备注</span><input id="p-note" placeholder="选填" value="' + esc(p ? p.note : '') + '"></label>' +
+      '</div>';
+    openSheet({
+      title: (p ? '编辑' : '新增') + (isC ? '客户' : '供货商'),
+      body: body,
+      foot: (p ? '<button class="btn-ghost sq danger" data-act="del-party" data-kind="' + kind + '" data-id="' + id + '">' + icon('trash') + '</button>' : '') +
+        '<button class="btn-primary" data-act="save-party" data-kind="' + kind + '" data-id="' + (id || '') + '">保存</button>',
+      after: function () { $('#p-name').focus(); }
+    });
+  }
+
+  function saveParty(kind, id) {
+    var name = $('#p-name').value.trim();
+    if (!name) { toast('请填写名称'); return; }
+    var phone = $('#p-phone').value.trim();
+    var opening = S.round2(S.num($('#p-opening').value));
+    var note = $('#p-note').value.trim();
+    var list = kind === 'customer' ? db.customers : db.suppliers;
+
+    var dup = list.filter(function (x) { return x.name === name && x.id !== id; });
+    if (dup.length) { toast('已经有同名的了'); return; }
+
+    if (id) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) {
+          list[i].name = name;
+          list[i].phone = phone;
+          list[i].opening = opening;
+          list[i].note = note;
+          break;
+        }
+      }
+      db.records.forEach(function (r) {
+        if (r.partyId === id) r.partyName = name;
+      });
+    } else {
+      list.push({ id: S.uid(), name: name, phone: phone, note: note, opening: opening, createdAt: Date.now() });
+    }
+    commit();
+    closeSheet();
+    toast('已保存');
+  }
+
+  function delParty(kind, id) {
+    var recs = S.partyRecords(db, kind, id);
+    var msg = recs.length
+      ? '这个单位还有 ' + recs.length + ' 笔往来记录，<br/>删除会一起删掉，确定吗？'
+      : '确定删除吗？';
+    confirmSheet(msg, '删除').then(function (ok) {
+      if (!ok) return;
+      if (kind === 'customer') db.customers = db.customers.filter(function (x) { return x.id !== id; });
+      else db.suppliers = db.suppliers.filter(function (x) { return x.id !== id; });
+      db.records = db.records.filter(function (r) { return r.partyId !== id; });
+      commit();
+      toast('已删除');
+    });
+  }
+
+  /* ================= 对账单 ================= */
+
+  function openStatement(kind, id) {
+    var mr = S.monthRange(0);
+    var from = mr[0], to = mr[1];
+    ui.stmt = { kind: kind, id: id };
+    openSheet({
+      title: '对账单',
+      body: '<div id="stmtWrap">' + statementHTML(kind, id, from, to) + '</div>',
+      foot: '<button class="btn-ghost" data-act="stmt-refresh" style="flex:1">按日期刷新</button>' +
+        '<button class="btn-primary" data-act="stmt-print">打印 / 存PDF</button>'
+    });
+  }
+
+  function refreshStatement() {
+    if (!ui.stmt) return;
+    var f = $('#stmtFrom') ? $('#stmtFrom').value : S.monthRange(0)[0];
+    var t = $('#stmtTo') ? $('#stmtTo').value : S.monthRange(0)[1];
+    $('#stmtWrap').innerHTML = statementHTML(ui.stmt.kind, ui.stmt.id, f, t);
+  }
+
+  function statementHTML(kind, id, from, to) {
+    var sm = S.statement(db, kind, id, from, to);
+    if (!sm) return '<div class="empty">没有这个单位</div>';
+    var isC = kind === 'customer';
+    var h = '<div class="range-row">' +
+      '<label class="field"><span>从</span><input id="stmtFrom" type="date" value="' + from + '"></label>' +
+      '<label class="field"><span>到</span><input id="stmtTo" type="date" value="' + to + '"></label>' +
+      '</div>';
+
+    h += '<div class="card" style="padding:12px 14px;margin-bottom:10px">' +
+      '<div class="kv"><span>客户</span><b>' + esc(sm.party.name) + '</b></div>' +
+      '<div class="kv"><span>期初' + (isC ? '欠款' : '应付') + '</span><b>' + money(sm.opening) + '</b></div>' +
+      '<div class="kv"><span>本期新增</span><b class="neg">' + money(sm.totalIn) + '</b></div>' +
+      '<div class="kv"><span>本期' + (isC ? '已收' : '已付') + '</span><b class="pos">' + money(sm.totalOut) + '</b></div>' +
+      '<div class="kv"><span>期末' + (isC ? '欠款' : '应付') + '</span><b style="font-size:17px">' + money(sm.closing) + '</b></div>' +
+      '</div>';
+
+    if (!sm.rows.length) {
+      h += '<div class="card"><div class="empty">这段时间没有往来</div></div>';
+      return h;
+    }
+
+    h += '<div style="overflow-x:auto"><table class="stmt-table">' +
+      '<thead><tr><th>日期</th><th>项目</th><th>金额</th><th>已收付</th><th>结余</th></tr></thead><tbody>' +
+      sm.rows.map(function (r) {
+        return '<tr><td>' + r.date.slice(5) + '</td>' +
+          '<td>' + r.label + (r.detail ? '<div style="font-size:10px;color:#8b968f">' + esc(r.detail) + '</div>' : '') + '</td>' +
+          '<td class="num">' + (r.amount ? money(r.amount) : '—') + '</td>' +
+          '<td class="num">' + (r.paid ? money(r.paid) : '—') + '</td>' +
+          '<td class="num"><b>' + money(r.balance) + '</b></td></tr>';
+      }).join('') +
+      '</tbody></table></div>';
+
+    return h;
+  }
+
+  function printStatement() {
+    if (!ui.stmt) return;
+    var kind = ui.stmt.kind, id = ui.stmt.id;
+    var from = $('#stmtFrom') ? $('#stmtFrom').value : S.monthRange(0)[0];
+    var to = $('#stmtTo') ? $('#stmtTo').value : S.monthRange(0)[1];
+    var sm = S.statement(db, kind, id, from, to);
+    if (!sm) return;
+    var isC = kind === 'customer';
+    var shop = db.settings.shopName || '水果批发';
+
+    var rows = sm.rows.map(function (r) {
+      return '<tr><td>' + r.date + '</td><td>' + r.label + (r.detail ? '<br><span style="font-size:10px;color:#666">' + esc(r.detail) + '</span>' : '') + '</td>' +
+        '<td class="r">' + (r.amount ? money(r.amount) : '') + '</td>' +
+        '<td class="r">' + (r.paid ? money(r.paid) : '') + '</td>' +
+        '<td class="r">' + money(r.balance) + '</td></tr>';
+    }).join('');
+
+    var html = '<div class="print-sheet">' +
+      '<h1>' + esc(shop) + '</h1>' +
+      '<div class="p-sub">' + (isC ? '客户对账单' : '供货商对账单') + '</div>' +
+      '<div class="p-meta"><span>单位：' + esc(sm.party.name) + (sm.party.phone ? '（' + esc(sm.party.phone) + '）' : '') + '</span>' +
+      '<span>期间：' + (from || '开始') + ' 至 ' + (to || '今天') + '</span></div>' +
+      '<table><thead><tr><th>日期</th><th>项目</th><th>金额</th><th>已收付</th><th>结余</th></tr></thead>' +
+      '<tbody><tr><td colspan="4">期初' + (isC ? '欠款' : '应付') + '</td><td class="r">' + money(sm.opening) + '</td></tr>' +
+      rows +
+      '<tr><td colspan="4"><b>期末' + (isC ? '欠款' : '应付') + '</b></td><td class="r"><b>' + money(sm.closing) + '</b></td></tr>' +
+      '</tbody></table>' +
+      '<div class="p-foot"><span>客户签字：________________</span><span>制单日期：' + stamp() + '</span></div>' +
+      '<div class="p-thanks">本期新增 ' + money(sm.totalIn) + '，已' + (isC ? '收' : '付') + ' ' + money(sm.totalOut) + '，' +
+      '期末结' + (isC ? '欠 ' : '应付 ') + money(sm.closing) + '</div>' +
+      '</div>';
+
+    $('#printRoot').innerHTML = html;
+    setTimeout(function () { window.print(); }, 60);
+  }
+
+  /* ================= 设置 ================= */
+
+  function openSettings() {
+    var body = '<div class="form">' +
+      '<label class="field"><span>店铺名称</span><input id="set-name" value="' + esc(db.settings.shopName || '') + '" placeholder="如：老张水果批发"></label>' +
+      '<label class="field"><span>老板姓名</span><input id="set-owner" value="' + esc(db.settings.owner || '') + '" placeholder="选填"></label>' +
+      '<label class="field"><span>联系电话</span><input id="set-phone" inputmode="tel" value="' + esc(db.settings.phone || '') + '" placeholder="选填"></label>' +
+      '<div class="tips" style="padding:4px 2px 0">名称会显示在首页和打印出来的对账单上。</div>' +
+      '</div>';
+    openSheet({
+      title: '店铺设置',
+      body: body,
+      foot: '<button class="btn-primary" data-act="save-settings">保存</button>'
+    });
+  }
+
+  function saveSettings() {
+    db.settings.shopName = $('#set-name').value.trim() || '我的水果批发';
+    db.settings.owner = $('#set-owner').value.trim();
+    db.settings.phone = $('#set-phone').value.trim();
+    S.saveStorage(db);
+    render(false);
+    closeSheet();
+    toast('已保存');
+  }
+
+  /* ================= 事件 ================= */
+
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!el) return;
+    var act = el.getAttribute('data-act');
+    var id = el.getAttribute('data-id') || '';
+    var kind = el.getAttribute('data-kind') || '';
+
+    switch (act) {
+      case 'tab': go(el.getAttribute('data-tab')); break;
+      case 'go-parties': go('parties'); break;
+      case 'close-sheet': closeSheet(); break;
+
+      case 'quick-add':
+        openSheet({
+          title: '记一笔',
+          body: '<div class="quick-menu">' +
+            '<button class="qm-btn" data-act="new-sale"><span class="qb-ic" style="background:var(--green-soft);color:var(--green)">' + icon('plus') + '</span><b>卖货</b><small>卖给客户，可赊账</small></button>' +
+            '<button class="qm-btn" data-act="new-purchase"><span class="qb-ic" style="background:var(--orange-soft);color:var(--orange)">' + icon('download') + '</span><b>进货</b><small>从供货商拉货</small></button>' +
+            '<button class="qm-btn" data-act="new-receipt"><span class="qb-ic" style="background:var(--blue-soft);color:var(--blue)">' + icon('upload') + '</span><b>收欠款</b><small>客户还钱了</small></button>' +
+            '<button class="qm-btn" data-act="new-expense"><span class="qb-ic" style="background:var(--red-soft);color:var(--red)">' + icon('doc') + '</span><b>记支出</b><small>运费、人工、包装</small></button>' +
+            '<button class="qm-btn" data-act="new-payment"><span class="qb-ic" style="background:#f3eafc;color:#7b46b5">' + icon('download') + '</span><b>付货款</b><small>还供货商的钱</small></button>' +
+            '<button class="qm-btn" data-act="add-party"><span class="qb-ic" style="background:#eef2f0;color:#47554f">' + icon('users') + '</span><b>加客户</b><small>新建往来单位</small></button>' +
+            '</div>'
+        });
+        break;
+
+      case 'new-sale': closeSheet(); setTimeout(function () { openEntry('sale'); }, 60); break;
+      case 'new-purchase': closeSheet(); setTimeout(function () { openEntry('purchase'); }, 60); break;
+      case 'new-receipt': closeSheet(); setTimeout(function () { openSettle('customer'); }, 60); break;
+      case 'new-payment': closeSheet(); setTimeout(function () { openSettle('supplier'); }, 60); break;
+      case 'new-expense': closeSheet(); setTimeout(function () { openExpense(); }, 60); break;
+      case 'new-settle': openSettle(kind, id); break;
+
+      case 'add-item':
+        var box = $('#items');
+        var div = document.createElement('div');
+        div.innerHTML = itemRowHTML(blankItem());
+        box.appendChild(div.firstChild);
+        var rows = $$('#items .item-row');
+        var last = rows[rows.length - 1];
+        $('.ir-name', last).focus();
+        break;
+
+      case 'del-item':
+        var row = el.closest('.item-row');
+        if ($$('#items .item-row').length <= 1) { toast('至少留一行'); break; }
+        row.parentNode.removeChild(row);
+        recalcEntry();
+        break;
+
+      case 'pick-product':
+        var pname = el.getAttribute('data-name');
+        var prod = null;
+        db.products.forEach(function (p) { if (p.name === pname) prod = p; });
+        var target = null;
+        $$('#items .item-row').forEach(function (x) {
+          if (!$('.ir-name', x).value.trim()) target = x;
+        });
+        if (!target) {
+          var d2 = document.createElement('div');
+          d2.innerHTML = itemRowHTML(blankItem());
+          $('#items').appendChild(d2.firstChild);
+          target = $$('#items .item-row').pop();
+        }
+        $('.ir-name', target).value = pname;
+        if (prod) {
+          $('.ir-unit', target).value = prod.unit || '斤';
+          if (!$('.ir-price', target).value && prod.price) $('.ir-price', target).value = S.fmtNum(prod.price);
+        }
+        $('.ir-qty', target).focus();
+        recalcEntry();
+        break;
+
+      case 'pick-party':
+        var forId = el.getAttribute('data-for');
+        var partyInput = document.getElementById(forId);
+        if (partyInput) {
+          partyInput.value = el.getAttribute('data-name') || '';
+          if (forId === 's-party') updateSettleBalance();
+        }
+        break;
+
+      case 'pay-all':
+        var tot = 0;
+        $$('#items .item-row').forEach(function (r2) {
+          tot += S.round2(S.num($('.ir-qty', r2).value) * S.num($('.ir-price', r2).value));
+        });
+        $('#f-paid').value = S.fmtNum(S.round2(tot));
+        recalcEntry();
+        break;
+
+      case 'pay-none':
+        $('#f-paid').value = '0';
+        recalcEntry();
+        break;
+
+      case 'settle-all':
+        var sp = $('#s-party').value.trim();
+        var found = null;
+        db.customers.concat(db.suppliers).forEach(function (x) { if (x.name === sp) found = x; });
+        if (found) {
+          var kk = db.customers.indexOf(found) >= 0 ? 'customer' : 'supplier';
+          var b = S.partyBalance(db, kk, found.id);
+          $('#s-amount').value = S.fmtNum(Math.abs(b));
+        } else {
+          toast('先选一个客户');
+        }
+        break;
+
+      case 'save-entry':
+        saveEntry(el.getAttribute('data-type'), id || null);
+        break;
+      case 'save-settle':
+        saveSettle(kind, id || null);
+        break;
+      case 'save-expense':
+        saveExpense(id || null);
+        break;
+      case 'save-party':
+        saveParty(kind, id || null);
+        break;
+      case 'save-settings':
+        saveSettings();
+        break;
+
+      case 'bill-range': ui.billRange = el.getAttribute('data-v'); render(false); break;
+      case 'bill-type': ui.billType = el.getAttribute('data-v'); render(false); break;
+      case 'stat-range': ui.statRange = el.getAttribute('data-v'); render(false); break;
+      case 'party-kind': ui.partyKind = el.getAttribute('data-v'); render(false); break;
+
+      case 'open-record': openRecord(id); break;
+      case 'edit-record':
+        var er = db.records.filter(function (r) { return r.id === id; })[0];
+        if (!er) break;
+        closeSheet();
+        setTimeout(function () {
+          if (er.type === 'sale' || er.type === 'purchase') openEntry(er.type, er);
+          else if (er.type === 'expense') openExpense(er);
+          else openSettle(er.type === 'receipt' ? 'customer' : 'supplier', '', er);
+        }, 60);
+        break;
+      case 'del-record': delRecord(id); break;
+
+      case 'open-party': openParty(el.getAttribute('data-kind'), id); break;
+      case 'add-party':
+        closeSheet();
+        setTimeout(function () { openPartyForm(ui.partyKind || 'customer'); }, 60);
+        break;
+      case 'edit-party': openPartyForm(kind, id); break;
+      case 'del-party': delParty(kind, id); break;
+
+      case 'open-stmt': openStatement(kind, id); break;
+      case 'stmt-refresh': refreshStatement(); break;
+      case 'stmt-print': printStatement(); break;
+
+      case 'pick-cat':
+        ui.expenseCat = el.getAttribute('data-v');
+        $$('#e-cats .chip').forEach(function (c) { c.classList.toggle('active', c === el); });
+        break;
+
+      case 'open-settings': openSettings(); break;
+
+      case 'export-csv':
+        download('水果记账_' + stamp() + '.csv', S.toCSV(db), 'text/csv;charset=utf-8');
+        toast('已导出，用 Excel 打开');
+        break;
+      case 'export-json':
+        download('水果记账备份_' + stamp() + '.json', S.exportJSON(db), 'application/json');
+        toast('备份已导出，请存到微信/网盘');
+        break;
+      case 'import-json': importFile(); break;
+      case 'load-demo': loadDemo(); break;
+      case 'clear-all':
+        confirmSheet('清空后所有客户、供货商和账单都会消失，<br/>确定继续吗？', '清空').then(function (ok) {
+          if (!ok) return;
+          db = S.emptyDB();
+          S.saveStorage(db);
+          go('home');
+          toast('已清空');
+        });
+        break;
+    }
+  });
+
+  /* 输入时实时算钱 */
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (!t || !t.classList) return;
+    if (t.id === 's-party') { updateSettleBalance(); return; }
+    if (t.classList.contains('ir-qty') || t.classList.contains('ir-price') || t.id === 'f-paid') {
+      recalcEntry();
+    }
+  });
+
+  /* 选中常用水果后自动带出单位、单价 */
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (!t || !t.classList) return;
+    if (t.id === 'stmtFrom' || t.id === 'stmtTo') {
+      if (!$('#stmtFrom') || !$('#stmtTo')) return;
+      $('#stmtWrap').innerHTML = statementHTML(ui.stmt.kind, ui.stmt.id, $('#stmtFrom').value, $('#stmtTo').value);
+      return;
+    }
+    if (t.id === 's-party') { updateSettleBalance(); return; }
+    if (!t.classList.contains('ir-name')) return;
+    var name = t.value.trim();
+    if (!name) return;
+    var row = t.closest('.item-row');
+    db.products.forEach(function (p) {
+      if (p.name !== name) return;
+      if (p.unit) $('.ir-unit', row).value = p.unit;
+      if (p.price && !$('.ir-price', row).value) $('.ir-price', row).value = S.fmtNum(p.price);
+    });
+    recalcEntry();
+  });
+
+  /* 回车跳到下一个输入框 */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var t = e.target;
+    if (!t || t.tagName !== 'INPUT') return;
+    if (!$('#sheetRoot').classList.contains('open')) return;
+    var inputs = $$('#sheetRoot input, #sheetRoot select').filter(function (x) { return x.offsetParent !== null; });
+    var i = inputs.indexOf(t);
+    if (i >= 0 && i < inputs.length - 1) {
+      e.preventDefault();
+      inputs[i + 1].focus();
+    }
+  });
+
+  /* ================= 导入 / 示例 ================= */
+
+  function importFile() {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.addEventListener('change', function () {
+      var f = input.files && input.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          var next = S.importJSON(String(reader.result));
+          confirmSheet('导入会覆盖当前所有数据（现有 ' + db.records.length + ' 笔），<br/>确定吗？', '覆盖导入').then(function (ok) {
+            if (!ok) return;
+            db = next;
+            S.saveStorage(db);
+            go('home');
+            toast('导入成功，共 ' + db.records.length + ' 笔');
+          });
+        } catch (err) {
+          toast('导入失败：' + err.message);
+        }
+      };
+      reader.readAsText(f, 'utf-8');
+    });
+    input.click();
+  }
+
+  function loadDemo() {
+    confirmSheet('会载入一套演示数据（客户、供货商、账单），<br/>覆盖当前数据，确定吗？', '载入演示').then(function (ok) {
+      if (!ok) return;
+      db = S.demoDB();
+      S.saveStorage(db);
+      go('home');
+      toast('演示数据已载入');
+    });
+  }
+
+  /* ================= 启动 ================= */
+
+  // 支持 ?tab=bills 直接打开某个页面
+  (function initTab() {
+    try {
+      var m = /[?&]tab=([a-z]+)/.exec(location.search);
+      if (m && TABS.some(function (t) { return t.id === m[1]; })) ui.tab = m[1];
+    } catch (e) { /* ignore */ }
+  })();
+
+  render(true);
+
+  /* 放到网上（https）时注册离线缓存：装了之后没信号也能打开 */
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', function () {
+      try {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      } catch (e) { /* 忽略 */ }
+    });
+  }
+
+  /* 调试用入口（不影响正常使用） */
+  window.SGApp = {
+    get db() { return db; },
+    ui: ui,
+    render: render,
+    openEntry: openEntry,
+    openSettle: openSettle,
+    openExpense: openExpense,
+    openParty: openParty,
+    openStatement: openStatement,
+    openRecord: openRecord,
+    openSettings: openSettings
+  };
+})();
+
+</script>
 </body>
 </html>
