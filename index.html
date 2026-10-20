@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f7a3d" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="水果记账" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%231f7a3d'/%3E%3Ctext x='32' y='45' font-size='36' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E%E8%AE%B0%3C/text%3E%3C/svg%3E" />
+  <title>水果记账本</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-main">
+        <div class="shop-name" id="shopName">我的水果批发</div>
+        <div class="shop-sub" id="shopSub"></div>
+      </div>
+      <button class="icon-btn" data-act="open-settings" aria-label="设置" id="btnSettings"></button>
+    </header>
+
+    <main id="view" class="view" role="main"></main>
+
+    <nav class="tabbar" id="tabbar" role="tablist"></nav>
+    <button class="fab" data-act="quick-add" aria-label="记一笔">＋</button>
+  </div>
+
+  <div id="sheetRoot" class="sheet-root"></div>
+  <div id="toastRoot" class="toast-root"></div>
+  <div id="printRoot" class="print-root"></div>
+
+  <datalist id="prodList"></datalist>
+  <datalist id="partyList"></datalist>
+
+  <script src="store.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
