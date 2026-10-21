@@ -33,6 +33,45 @@
   --shadow: 0 2px 10px rgba(18, 48, 32, .055);
   --tab-h: 58px;
   --fg-font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+  /* 字号缩放：改一个数，全站文字跟着变 */
+  --fs: 1;
+  /* 品牌色（默认绿色） */
+  --brand-a: #237d41;
+  --brand-b: #2f9c55;
+  --brand-c: #47ad63;
+  --brand-shadow: rgba(31, 122, 61, .38);
+}
+
+/* ---------- 字号档位 ---------- */
+html[data-fs="sm"] { --fs: 0.92; }
+html[data-fs="md"] { --fs: 1; }
+html[data-fs="lg"] { --fs: 1.15; }
+html[data-fs="xl"] { --fs: 1.3; }
+
+/* ---------- 主题配色 ---------- */
+html[data-theme="green"] {
+  --green: #1f7a3d; --green-2: #2f9c55; --green-soft: #e8f5ec;
+  --brand-a: #237d41; --brand-b: #2f9c55; --brand-c: #47ad63;
+}
+html[data-theme="orange"] {
+  --green: #b4530a; --green-2: #e07b1a; --green-soft: #fdf0e1;
+  --brand-a: #b4530a; --brand-b: #e07b1a; --brand-c: #f2a34a;
+  --brand-shadow: rgba(180, 83, 10, .35);
+}
+html[data-theme="blue"] {
+  --green: #1d5f9e; --green-2: #2b7cc4; --green-soft: #e7f1fa;
+  --brand-a: #1a558f; --brand-b: #2b7cc4; --brand-c: #4f9ad8;
+  --brand-shadow: rgba(26, 85, 143, .35);
+}
+html[data-theme="red"] {
+  --green: #a8322b; --green-2: #cf4b42; --green-soft: #fdecea;
+  --brand-a: #972c26; --brand-b: #cf4b42; --brand-c: #e2736b;
+  --brand-shadow: rgba(151, 44, 38, .35);
+}
+html[data-theme="purple"] {
+  --green: #6d3fa0; --green-2: #8a5cc0; --green-soft: #f2ebfa;
+  --brand-a: #5f3592; --brand-b: #8a5cc0; --brand-c: #a882d6;
+  --brand-shadow: rgba(95, 53, 146, .35);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -43,7 +82,7 @@ html, body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--fg-font);
-  font-size: 15px;
+  font-size: calc(15px * var(--fs, 1));
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
 }
@@ -77,21 +116,21 @@ input, select { outline: none; }
   align-items: center;
   gap: 10px;
   padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
-  background: linear-gradient(180deg, #1f7a3d 0%, #248044 100%);
+  background: linear-gradient(180deg, var(--brand-a) 0%, var(--brand-b) 100%);
   color: #fff;
   border-radius: 0 0 18px 18px;
-  box-shadow: 0 3px 14px rgba(15, 70, 38, .18);
+  box-shadow: 0 3px 14px rgba(10, 20, 15, .14);
 }
 .topbar-main { flex: 1; min-width: 0; }
 .shop-name {
-  font-size: 17px;
+  font-size: calc(17px * var(--fs, 1));
   font-weight: 700;
   letter-spacing: .2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.shop-sub { font-size: 12px; opacity: .82; margin-top: 1px; }
+.shop-sub { font-size: calc(12px * var(--fs, 1)); opacity: .82; margin-top: 1px; }
 .topbar .icon-btn { color: #fff; background: rgba(255, 255, 255, .16); }
 
 .icon-btn {
@@ -119,8 +158,8 @@ input, select { outline: none; }
   display: flex; align-items: center; justify-content: space-between;
   margin: 16px 4px 8px;
 }
-.section-head h3 { margin: 0; font-size: 14px; color: var(--ink2); font-weight: 600; }
-.link { color: var(--green); font-size: 13px; }
+.section-head h3 { margin: 0; font-size: calc(14px * var(--fs, 1)); color: var(--ink2); font-weight: 600; }
+.link { color: var(--green); font-size: calc(13px * var(--fs, 1)); }
 
 .pos { color: var(--green); }
 .neg { color: var(--red); }
@@ -130,7 +169,7 @@ input, select { outline: none; }
 
 /* ---------------- 首页 ---------------- */
 .hero {
-  background: linear-gradient(135deg, #237d41 0%, #2f9c55 62%, #47ad63 100%);
+  background: linear-gradient(135deg, var(--brand-a) 0%, var(--brand-b) 62%, var(--brand-c) 100%);
   color: #fff;
   padding: 16px 16px 14px;
   position: relative;
@@ -144,8 +183,8 @@ input, select { outline: none; }
   border-radius: 50%;
   background: rgba(255, 255, 255, .09);
 }
-.hero-top { display: flex; align-items: baseline; justify-content: space-between; font-size: 12px; opacity: .9; }
-.hero-num { font-size: 34px; font-weight: 800; letter-spacing: -.5px; margin: 4px 0 10px; font-variant-numeric: tabular-nums; }
+.hero-top { display: flex; align-items: baseline; justify-content: space-between; font-size: calc(12px * var(--fs, 1)); opacity: .9; }
+.hero-num { font-size: calc(34px * var(--fs, 1)); font-weight: 800; letter-spacing: -.5px; margin: 4px 0 10px; font-variant-numeric: tabular-nums; }
 .hero-foot { display: flex; gap: 8px; }
 .hero-foot > div {
   flex: 1;
@@ -153,8 +192,8 @@ input, select { outline: none; }
   border-radius: 11px;
   padding: 7px 9px;
 }
-.hero-foot b { display: block; font-size: 15px; font-variant-numeric: tabular-nums; }
-.hero-foot span { font-size: 11px; opacity: .85; }
+.hero-foot b { display: block; font-size: calc(15px * var(--fs, 1)); font-variant-numeric: tabular-nums; }
+.hero-foot span { font-size: calc(11px * var(--fs, 1)); opacity: .85; }
 
 .quad { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
 .quad-item {
@@ -162,16 +201,16 @@ input, select { outline: none; }
   box-shadow: var(--shadow);
   display: flex; flex-direction: column; gap: 2px;
 }
-.quad-item span { font-size: 12px; color: var(--muted); }
-.quad-item b { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.quad-item span { font-size: calc(12px * var(--fs, 1)); color: var(--muted); }
+.quad-item b { font-size: calc(18px * var(--fs, 1)); font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .debt {
   display: flex; align-items: center; gap: 6px;
   padding: 14px;
 }
 .debt-item { flex: 1; }
-.debt-item span { display: block; font-size: 12px; color: var(--muted); }
-.debt-item b { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.debt-item span { display: block; font-size: calc(12px * var(--fs, 1)); color: var(--muted); }
+.debt-item b { font-size: calc(20px * var(--fs, 1)); font-weight: 700; font-variant-numeric: tabular-nums; }
 .chev { color: #c6cec9; }
 
 .quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin: 12px 0 4px; }
@@ -181,7 +220,7 @@ input, select { outline: none; }
   padding: 12px 4px 10px;
   box-shadow: var(--shadow);
   display: flex; flex-direction: column; align-items: center; gap: 6px;
-  font-size: 13px; color: var(--ink2); font-weight: 500;
+  font-size: calc(13px * var(--fs, 1)); color: var(--ink2); font-weight: 500;
 }
 .quick-btn .qb-ic {
   width: 34px; height: 34px; border-radius: 11px;
@@ -206,16 +245,17 @@ input, select { outline: none; }
 .badge {
   width: 30px; height: 30px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; flex: none;
+  font-size: calc(13px * var(--fs, 1)); font-weight: 700; flex: none;
 }
 .b-sale { background: var(--green-soft); color: var(--green); }
 .b-purchase { background: var(--orange-soft); color: var(--orange); }
 .b-receipt { background: var(--blue-soft); color: var(--blue); }
 .b-payment { background: #f3eafc; color: #7b46b5; }
 .b-expense { background: var(--red-soft); color: var(--red); }
+.b-refund { background: #fff0e6; color: #b4530a; }
 .row-main { flex: 1; min-width: 0; }
 .row-title {
-  font-size: 15px; font-weight: 600;
+  font-size: calc(15px * var(--fs, 1)); font-weight: 600;
   display: flex; align-items: center; gap: 6px;
   min-width: 0;
 }
@@ -223,22 +263,22 @@ input, select { outline: none; }
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
 }
 .row-sub {
-  font-size: 12px; color: var(--muted); margin-top: 2px;
+  font-size: calc(12px * var(--fs, 1)); color: var(--muted); margin-top: 2px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.row-amt { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; flex: none; }
-.row-amt small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+.row-amt { font-size: calc(16px * var(--fs, 1)); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; flex: none; }
+.row-amt small { display: block; font-size: calc(11px * var(--fs, 1)); font-weight: 500; color: var(--muted); }
 .tag-debt {
-  font-style: normal; font-size: 11px; font-weight: 600;
+  font-style: normal; font-size: calc(11px * var(--fs, 1)); font-weight: 600;
   color: var(--red); background: var(--red-soft);
   padding: 1px 6px; border-radius: 6px; flex: none;
 }
 
 .empty {
   text-align: center; color: var(--muted);
-  padding: 34px 20px; font-size: 13px; line-height: 1.9;
+  padding: 34px 20px; font-size: calc(13px * var(--fs, 1)); line-height: 1.9;
 }
-.empty b { display: block; font-size: 15px; color: var(--ink2); margin-bottom: 4px; }
+.empty b { display: block; font-size: calc(15px * var(--fs, 1)); color: var(--ink2); margin-bottom: 4px; }
 .empty .btn-primary { margin-top: 14px; display: inline-flex; width: auto; padding: 9px 22px; }
 
 /* ---------------- 账单页 ---------------- */
@@ -251,7 +291,7 @@ input, select { outline: none; }
   border-radius: 999px;
   background: #fff;
   border: 1px solid var(--line);
-  font-size: 13px;
+  font-size: calc(13px * var(--fs, 1));
   color: var(--ink2);
   white-space: nowrap;
 }
@@ -259,17 +299,17 @@ input, select { outline: none; }
 
 .sumline {
   display: flex; gap: 12px; flex-wrap: wrap;
-  font-size: 12px; color: var(--muted);
+  font-size: calc(12px * var(--fs, 1)); color: var(--muted);
   padding: 0 4px 8px;
 }
 .sumline b { font-variant-numeric: tabular-nums; font-weight: 600; }
 
 .day-head {
   display: flex; justify-content: space-between; align-items: baseline;
-  font-size: 12px; color: var(--muted);
+  font-size: calc(12px * var(--fs, 1)); color: var(--muted);
   padding: 12px 4px 6px;
 }
-.day-head span:first-child { font-weight: 600; color: var(--ink2); font-size: 13px; }
+.day-head span:first-child { font-weight: 600; color: var(--ink2); font-size: calc(13px * var(--fs, 1)); }
 
 /* ---------------- 往来单位 ---------------- */
 .segmented {
@@ -277,7 +317,7 @@ input, select { outline: none; }
 }
 .segmented button {
   flex: 1; padding: 8px; border-radius: 9px;
-  font-size: 14px; color: var(--ink2); font-weight: 500;
+  font-size: calc(14px * var(--fs, 1)); color: var(--ink2); font-weight: 500;
 }
 .segmented button.active { background: #fff; color: var(--green); font-weight: 700; box-shadow: 0 1px 4px rgba(0, 0, 0, .07); }
 
@@ -287,21 +327,21 @@ input, select { outline: none; }
   width: 38px; height: 38px; border-radius: 12px; flex: none;
   background: var(--green-soft); color: var(--green);
   display: flex; align-items: center; justify-content: center;
-  font-size: 15px; font-weight: 700;
+  font-size: calc(15px * var(--fs, 1)); font-weight: 700;
 }
 .party-main { flex: 1; min-width: 0; }
-.party-name { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-.party-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.party-name { font-size: calc(15px * var(--fs, 1)); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.party-sub { font-size: calc(12px * var(--fs, 1)); color: var(--muted); margin-top: 2px; }
 .party-amt { text-align: right; font-variant-numeric: tabular-nums; }
-.party-amt b { font-size: 17px; font-weight: 700; display: block; }
-.party-amt span { font-size: 11px; color: var(--muted); }
+.party-amt b { font-size: calc(17px * var(--fs, 1)); font-weight: 700; display: block; }
+.party-amt span { font-size: calc(11px * var(--fs, 1)); color: var(--muted); }
 
 /* ---------------- 统计 ---------------- */
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
 .stat-cell { background: #fff; border-radius: 14px; padding: 12px 13px; box-shadow: var(--shadow); }
-.stat-cell span { font-size: 12px; color: var(--muted); }
-.stat-cell b { display: block; font-size: 19px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
-.stat-cell i { font-style: normal; font-size: 11px; color: var(--muted); }
+.stat-cell span { font-size: calc(12px * var(--fs, 1)); color: var(--muted); }
+.stat-cell b { display: block; font-size: calc(19px * var(--fs, 1)); font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.stat-cell i { font-style: normal; font-size: calc(11px * var(--fs, 1)); color: var(--muted); }
 
 .chart { display: flex; align-items: flex-end; gap: 2px; height: 128px; overflow-x: auto; padding-top: 6px; }
 .chart-col { flex: 1; min-width: 6px; display: flex; flex-direction: column; align-items: center; height: 100%; }
@@ -309,38 +349,38 @@ input, select { outline: none; }
 .chart-bars i { width: 46%; max-width: 8px; border-radius: 3px 3px 0 0; display: block; min-height: 2px; }
 .bar-sale { background: var(--green-2); }
 .bar-buy { background: #f0b46a; }
-.chart-x { font-size: 9px; color: var(--muted); margin-top: 4px; height: 12px; }
-.legend { display: flex; gap: 14px; font-size: 11px; color: var(--muted); margin-top: 8px; }
+.chart-x { font-size: calc(9px * var(--fs, 1)); color: var(--muted); margin-top: 4px; height: 12px; }
+.legend { display: flex; gap: 14px; font-size: calc(11px * var(--fs, 1)); color: var(--muted); margin-top: 8px; }
 .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }
 
 .rank-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; }
 .rank-no {
   width: 20px; height: 20px; border-radius: 6px; flex: none;
   background: #f0f3f1; color: var(--muted);
-  font-size: 11px; font-weight: 700;
+  font-size: calc(11px * var(--fs, 1)); font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
 .rank-item.top1 .rank-no { background: var(--green); color: #fff; }
 .rank-item.top2 .rank-no { background: #ffd9a8; color: #97590e; }
 .rank-item.top3 .rank-no { background: #e2e7e4; color: #5a6660; }
 .rank-main { flex: 1; min-width: 0; }
-.rank-name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-name { font-size: calc(14px * var(--fs, 1)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rank-bar { height: 5px; background: #eef1ef; border-radius: 3px; margin-top: 5px; overflow: hidden; }
-.rank-bar i { display: block; height: 100%; background: linear-gradient(90deg, #4caf6f, #2f9c55); border-radius: 3px; }
-.rank-val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; flex: none; }
-.rank-val small { display: block; font-size: 11px; color: var(--muted); font-weight: 500; }
+.rank-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--brand-c), var(--brand-b)); border-radius: 3px; }
+.rank-val { font-size: calc(13px * var(--fs, 1)); font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; flex: none; }
+.rank-val small { display: block; font-size: calc(11px * var(--fs, 1)); color: var(--muted); font-weight: 500; }
 
 /* ---------------- 我的 ---------------- */
 .list-group { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 12px; }
-.group-row { display: flex; align-items: center; gap: 12px; padding: 14px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.group-row { display: flex; align-items: center; gap: 12px; padding: 14px; border-bottom: 1px solid var(--line); font-size: calc(15px * var(--fs, 1)); }
 .group-row:last-child { border-bottom: none; }
 .group-row:active { background: #f7f9f8; }
 .group-row .gr-ic { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex: none; }
 .group-row .gr-main { flex: 1; }
-.group-row .gr-sub { font-size: 12px; color: var(--muted); }
+.group-row .gr-sub { font-size: calc(12px * var(--fs, 1)); color: var(--muted); }
 .group-row .chev { color: #c6cec9; }
 .danger { color: var(--red) !important; }
-.tips { font-size: 12px; color: var(--muted); padding: 0 6px 20px; line-height: 1.8; }
+.tips { font-size: calc(12px * var(--fs, 1)); color: var(--muted); padding: 0 6px 20px; line-height: 1.8; }
 
 /* ---------------- 底部 tab ---------------- */
 .tabbar {
@@ -361,7 +401,7 @@ input, select { outline: none; }
 .tabbar button {
   flex: 1;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-  color: #9aa5a0; font-size: 11px;
+  color: #9aa5a0; font-size: calc(11px * var(--fs, 1));
 }
 .tabbar button.active { color: var(--green); font-weight: 600; }
 .tabbar .ico { width: 22px; height: 22px; }
@@ -372,17 +412,18 @@ input, select { outline: none; }
   bottom: calc(var(--tab-h) + 18px + env(safe-area-inset-bottom));
   width: 56px; height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2f9c55, #1f7a3d);
+  background: linear-gradient(135deg, var(--brand-b), var(--brand-a));
   color: #fff;
-  font-size: 30px; font-weight: 300; line-height: 1;
+  font-size: calc(30px * var(--fs, 1)); font-weight: 300; line-height: 1;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 6px 18px rgba(31, 122, 61, .38);
+  box-shadow: 0 6px 18px rgba(10, 20, 15, .22);
   z-index: 31;
 }
 .fab:active { transform: scale(.93); }
 
 /* ---------------- 弹层 ---------------- */
 .sheet-root { position: fixed; inset: 0; z-index: 100; display: none; }
+#sheetRoot2 { z-index: 120; }
 .sheet-root.open { display: block; }
 .sheet-mask { position: absolute; inset: 0; background: rgba(12, 26, 18, .42); animation: fadeIn .18s ease; }
 .sheet {
@@ -405,7 +446,7 @@ input, select { outline: none; }
   background: #f6f8f7;
   flex: none;
 }
-.sheet-head h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.sheet-head h2 { margin: 0; font-size: calc(17px * var(--fs, 1)); font-weight: 700; }
 .sheet-body { flex: 1; overflow-y: auto; padding: 4px 14px 20px; -webkit-overflow-scrolling: touch; }
 .sheet-foot {
   flex: none;
@@ -419,12 +460,12 @@ input, select { outline: none; }
   flex: 1;
   height: 48px;
   border-radius: 13px;
-  background: linear-gradient(135deg, #2f9c55, #1f7a3d);
+  background: linear-gradient(135deg, var(--brand-b), var(--brand-a));
   color: #fff;
-  font-size: 16px;
+  font-size: calc(16px * var(--fs, 1));
   font-weight: 600;
   display: flex; align-items: center; justify-content: center; gap: 6px;
-  box-shadow: 0 4px 12px rgba(31, 122, 61, .24);
+  box-shadow: 0 4px 12px rgba(10, 20, 15, .16);
 }
 .btn-primary:active { transform: scale(.985); }
 .btn-ghost {
@@ -432,7 +473,7 @@ input, select { outline: none; }
   border-radius: 13px;
   background: #eef2f0;
   color: var(--ink2);
-  font-size: 15px;
+  font-size: calc(15px * var(--fs, 1));
   display: flex; align-items: center; justify-content: center;
 }
 .btn-ghost.sq { width: 48px; padding: 0; }
@@ -441,70 +482,92 @@ input, select { outline: none; }
 .form { display: flex; flex-direction: column; gap: 10px; }
 .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .field { display: flex; flex-direction: column; gap: 5px; }
-.field > span { font-size: 12px; color: var(--muted); padding-left: 2px; }
+.field > span { font-size: calc(12px * var(--fs, 1)); color: var(--muted); padding-left: 2px; }
 .field input, .field select {
   height: 46px;
   border-radius: 12px;
   border: 1px solid var(--line);
   background: #fff;
   padding: 0 12px;
-  font-size: 16px;
+  font-size: calc(16px * var(--fs, 1));
   width: 100%;
   appearance: none;
 }
 .field input:focus, .field select:focus { border-color: var(--green-2); box-shadow: 0 0 0 3px rgba(47, 156, 85, .12); }
-.field input::placeholder { color: #b3bcb7; font-size: 14px; }
+.field input::placeholder { color: #b3bcb7; font-size: calc(14px * var(--fs, 1)); }
 
 .field-block {
   background: #fff; border-radius: 14px; border: 1px solid var(--line);
   padding: 10px 10px 8px; display: flex; flex-direction: column; gap: 8px;
 }
 .block-head { display: flex; align-items: center; justify-content: space-between; }
-.block-head > span { font-size: 12px; color: var(--muted); padding-left: 2px; }
-.mini-btn { font-size: 13px; color: var(--green); font-weight: 600; padding: 2px 4px; }
+.block-head > span { font-size: calc(12px * var(--fs, 1)); color: var(--muted); padding-left: 2px; }
+.mini-btn { font-size: calc(13px * var(--fs, 1)); color: var(--green); font-weight: 600; padding: 2px 4px; }
 
 .item-row { background: #f7f9f8; border-radius: 11px; padding: 8px; display: flex; flex-direction: column; gap: 7px; }
 .ir-line { display: flex; align-items: center; gap: 6px; }
 .ir-name {
   flex: 1; height: 38px; border-radius: 9px; border: 1px solid var(--line);
-  background: #fff; padding: 0 10px; font-size: 15px; min-width: 0;
+  background: #fff; padding: 0 10px; font-size: calc(16px * var(--fs, 1)); min-width: 0;
+}
+.ir-unit {
+  width: 64px; flex: none; height: 38px; border-radius: 9px;
+  border: 1px solid var(--line); background: #fff;
+  padding: 0 4px; font-size: calc(15px * var(--fs, 1)); appearance: none;
 }
 .ir-del { width: 30px; height: 30px; border-radius: 50%; color: #b3bcb7; display: flex; align-items: center; justify-content: center; flex: none; }
 .ir-del .ico { width: 16px; height: 16px; }
-.ir-grid { display: grid; grid-template-columns: 1.1fr .9fr 1.1fr 1fr; gap: 6px; }
+.ir-grid { display: grid; grid-template-columns: 1.05fr .92fr 1fr .95fr; gap: 5px; }
+.ir-grid-5 { grid-template-columns: 1fr .78fr .86fr 1fr .95fr; }
+.ir-box { display: flex; align-items: center; gap: 7px; padding: 2px 2px 0; }
+.ir-box > span { font-size: calc(11px * var(--fs, 1)); color: var(--muted); }
+.ir-box input {
+  width: 58px; height: 32px; border-radius: 8px; border: 1px solid var(--line);
+  background: #fff; padding: 0 8px; font-size: calc(15px * var(--fs, 1));
+}
+.ir-box select {
+  height: 32px; border-radius: 8px; border: 1px solid var(--line);
+  background: #fff; padding: 0 6px; font-size: calc(13px * var(--fs, 1)); appearance: none;
+}
+.ir-box .ir-boxdep { margin-left: auto; font-size: calc(13px * var(--fs, 1)); font-weight: 600; color: var(--red); }
+
+.ir-net {
+  height: 38px; display: flex; align-items: center; justify-content: flex-end;
+  font-size: calc(15px * var(--fs, 1)); color: var(--ink2); font-variant-numeric: tabular-nums; padding-right: 3px;
+}
 .ir-cell { display: flex; flex-direction: column; gap: 2px; }
-.ir-cell span { font-size: 10px; color: var(--muted); padding-left: 3px; }
+.ir-cell span { font-size: calc(10px * var(--fs, 1)); color: var(--muted); padding-left: 3px; }
 .ir-cell input, .ir-cell select {
   height: 38px; border-radius: 9px; border: 1px solid var(--line);
-  background: #fff; padding: 0 8px; font-size: 15px; width: 100%; appearance: none;
+  background: #fff; padding: 0 8px; font-size: calc(15px * var(--fs, 1)); width: 100%; appearance: none;
 }
 .ir-amt { display: flex; flex-direction: column; gap: 2px; }
-.ir-amt span { font-size: 10px; color: var(--muted); padding-left: 3px; }
-.ir-amt b { height: 38px; display: flex; align-items: center; justify-content: flex-end; font-size: 15px; font-variant-numeric: tabular-nums; padding-right: 2px; }
+.ir-amt span { font-size: calc(10px * var(--fs, 1)); color: var(--muted); padding-left: 3px; }
+.ir-amt b { height: 38px; display: flex; align-items: center; justify-content: flex-end; font-size: calc(15px * var(--fs, 1)); font-variant-numeric: tabular-nums; padding-right: 2px; }
 
 .common-strip { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0; scrollbar-width: none; }
 .common-strip::-webkit-scrollbar { display: none; }
 .strip-block { display: flex; flex-direction: column; gap: 4px; }
-.strip-label { font-size: 11px; color: var(--muted); padding-left: 3px; }
+.strip-label { font-size: calc(11px * var(--fs, 1)); color: var(--muted); padding-left: 3px; }
 .pchip {
   flex: none; padding: 6px 11px; border-radius: 999px;
   background: #fff; border: 1px solid var(--line);
-  font-size: 12px; color: var(--ink2);
+  font-size: calc(12px * var(--fs, 1)); color: var(--ink2);
 }
 .pchip b { font-weight: 600; }
 
 .sum-card { background: #fff; border-radius: 14px; border: 1px solid var(--line); padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; }
-.sum-line { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--ink2); }
-.sum-line > b { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.sum-line { display: flex; align-items: center; justify-content: space-between; font-size: calc(14px * var(--fs, 1)); color: var(--ink2); }
+.sum-line > b { font-size: calc(22px * var(--fs, 1)); font-weight: 800; font-variant-numeric: tabular-nums; }
 .sum-line input {
-  width: 130px; height: 40px; text-align: right; font-size: 17px; font-weight: 600;
+  width: 130px; height: 40px; text-align: right; font-size: calc(17px * var(--fs, 1)); font-weight: 600;
   border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; background: #f7f9f8;
 }
 .pay-actions { display: flex; gap: 8px; justify-content: flex-end; }
-.pay-actions button { font-size: 12px; padding: 5px 12px; border-radius: 999px; background: #eef2f0; color: var(--ink2); }
+.pay-actions button { font-size: calc(12px * var(--fs, 1)); padding: 5px 12px; border-radius: 999px; background: #eef2f0; color: var(--ink2); }
 .pay-actions button.primary { background: var(--green-soft); color: var(--green); font-weight: 600; }
 .debt-line { border-top: 1px dashed var(--line); padding-top: 9px; }
-.debt-line b { font-size: 16px; color: var(--red); }
+.debt-line b { font-size: calc(16px * var(--fs, 1)); color: var(--red); }
 
 .quick-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 6px 2px 10px; }
 .qm-btn {
@@ -513,21 +576,32 @@ input, select { outline: none; }
   box-shadow: var(--shadow); text-align: left;
 }
 .qm-btn .qb-ic { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-.qm-btn b { font-size: 16px; }
-.qm-btn small { font-size: 12px; color: var(--muted); }
+.qm-btn b { font-size: calc(16px * var(--fs, 1)); }
+.qm-btn small { font-size: calc(12px * var(--fs, 1)); color: var(--muted); }
+
+/* 选货面板 */
+.pick-list { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.pick-item {
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px; text-align: left;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.pick-item:active { background: #f2f6f3; border-color: var(--green-2); }
+.pick-item b { font-size: calc(15px * var(--fs, 1)); font-weight: 600; }
+.pick-item span { font-size: calc(12px * var(--fs, 1)); color: var(--muted); }
 
 /* 详情 */
 .detail-hero { text-align: center; padding: 6px 0 16px; }
-.detail-hero .dh-label { font-size: 12px; color: var(--muted); }
-.detail-hero .dh-num { font-size: 36px; font-weight: 800; font-variant-numeric: tabular-nums; margin-top: 2px; }
-.detail-hero .dh-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.detail-hero .dh-label { font-size: calc(12px * var(--fs, 1)); color: var(--muted); }
+.detail-hero .dh-num { font-size: calc(36px * var(--fs, 1)); font-weight: 800; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.detail-hero .dh-sub { font-size: calc(12px * var(--fs, 1)); color: var(--muted); margin-top: 6px; }
 .detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 12px; }
 .detail-actions button {
   background: #fff; border-radius: 12px; padding: 12px;
-  font-size: 14px; color: var(--ink2); font-weight: 500;
+  font-size: calc(14px * var(--fs, 1)); color: var(--ink2); font-weight: 500;
   box-shadow: var(--shadow);
 }
-.detail-actions button.primary { background: var(--green); color: #fff; font-weight: 600; box-shadow: 0 4px 12px rgba(31, 122, 61, .22); }
+.detail-actions button.primary { background: var(--green); color: #fff; font-weight: 600; box-shadow: 0 4px 12px rgba(10, 20, 15, .16); }
 
 /* 开单预览 */
 .bill-preview {
@@ -541,7 +615,7 @@ input, select { outline: none; }
   box-shadow: 0 8px 26px rgba(18, 48, 32, .16);
 }
 .bill-hint {
-  font-size: 12px;
+  font-size: calc(12px * var(--fs, 1));
   color: var(--muted);
   text-align: center;
   margin: 12px 0 4px;
@@ -549,23 +623,23 @@ input, select { outline: none; }
 }
 .bill-hint b { color: var(--green); }
 
-.kv { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.kv { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: calc(14px * var(--fs, 1)); }
 .kv:last-child { border-bottom: none; }
 .kv span { color: var(--muted); }
 .kv b { font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* 对账单 */
-.stmt-table { width: 100%; border-collapse: collapse; background: #fff; font-size: 12px; border-radius: 12px; overflow: hidden; }
+.stmt-table { width: 100%; border-collapse: collapse; background: #fff; font-size: calc(12px * var(--fs, 1)); border-radius: 12px; overflow: hidden; }
 .stmt-table th, .stmt-table td { padding: 7px 6px; border-bottom: 1px solid var(--line); text-align: right; }
-.stmt-table th { background: #f4f7f5; color: var(--muted); font-weight: 600; font-size: 11px; }
+.stmt-table th { background: #f4f7f5; color: var(--muted); font-weight: 600; font-size: calc(11px * var(--fs, 1)); }
 .stmt-table th:first-child, .stmt-table td:first-child { text-align: left; }
 .stmt-table td.num { font-variant-numeric: tabular-nums; }
 .stmt-table tr:last-child td { border-bottom: none; }
-.stmt-total { display: flex; justify-content: space-between; padding: 10px 2px; font-size: 13px; }
-.stmt-total b { font-size: 16px; }
+.stmt-total { display: flex; justify-content: space-between; padding: 10px 2px; font-size: calc(13px * var(--fs, 1)); }
+.stmt-total b { font-size: calc(16px * var(--fs, 1)); }
 .range-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 10px; }
 .range-row .field { flex: 1; }
-.range-row .field input { height: 42px; font-size: 14px; }
+.range-row .field input { height: 42px; font-size: calc(14px * var(--fs, 1)); }
 
 /* ---------------- toast ---------------- */
 .toast-root {
@@ -579,7 +653,7 @@ input, select { outline: none; }
   color: #fff;
   padding: 9px 18px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: calc(13px * var(--fs, 1));
   animation: toastIn .2s ease;
   max-width: 80vw;
   text-align: center;
@@ -594,21 +668,21 @@ input, select { outline: none; }
   .app, #sheetRoot, .toast-root { display: none !important; }
   .print-root { display: block !important; }
   .print-sheet { max-width: 190mm; margin: 0 auto; padding: 6mm 0; color: #000; font-family: var(--fg-font); }
-  .print-sheet h1 { font-size: 20px; text-align: center; margin: 0 0 4px; letter-spacing: 4px; }
-  .print-sheet .p-sub { text-align: center; font-size: 12px; color: #444; margin-bottom: 12px; }
-  .print-sheet .p-meta { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
-  .print-sheet table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  .print-sheet h1 { font-size: calc(20px * var(--fs, 1)); text-align: center; margin: 0 0 4px; letter-spacing: 4px; }
+  .print-sheet .p-sub { text-align: center; font-size: calc(12px * var(--fs, 1)); color: #444; margin-bottom: 12px; }
+  .print-sheet .p-meta { display: flex; justify-content: space-between; font-size: calc(12px * var(--fs, 1)); margin-bottom: 8px; }
+  .print-sheet table { width: 100%; border-collapse: collapse; font-size: calc(11.5px * var(--fs, 1)); }
   .print-sheet th, .print-sheet td { border: 1px solid #999; padding: 5px 6px; }
   .print-sheet th { background: #eee; font-weight: 600; }
   .print-sheet td.r { text-align: right; font-variant-numeric: tabular-nums; }
-  .print-sheet .p-foot { display: flex; justify-content: space-between; margin-top: 26px; font-size: 12px; }
-  .print-sheet .p-thanks { text-align: center; font-size: 11px; color: #666; margin-top: 18px; }
+  .print-sheet .p-foot { display: flex; justify-content: space-between; margin-top: 26px; font-size: calc(12px * var(--fs, 1)); }
+  .print-sheet .p-thanks { text-align: center; font-size: calc(11px * var(--fs, 1)); color: #666; margin-top: 18px; }
 }
 
 /* ---------------- 桌面适配 ---------------- */
 @media (min-width: 640px) {
   .view { padding: 16px 18px 0; }
-  .hero-num { font-size: 38px; }
+  .hero-num { font-size: calc(38px * var(--fs, 1)); }
   .quad { grid-template-columns: repeat(4, 1fr); }
   .stat-grid { grid-template-columns: repeat(4, 1fr); }
   .quick { gap: 12px; }
@@ -635,6 +709,7 @@ input, select { outline: none; }
   </div>
 
   <div id="sheetRoot" class="sheet-root"></div>
+  <div id="sheetRoot2" class="sheet-root"></div>
   <div id="toastRoot" class="toast-root"></div>
   <div id="printRoot" class="print-root"></div>
 
@@ -666,8 +741,49 @@ input, select { outline: none; }
     purchase: { label: '进货', long: '采购单', kind: 'supplier', short: '采' },
     receipt: { label: '收欠款', long: '收款', kind: 'customer', short: '收' },
     payment: { label: '付货款', long: '付款', kind: 'supplier', short: '付' },
-    expense: { label: '支出', long: '费用', kind: '', short: '支' }
+    expense: { label: '支出', long: '费用', kind: '', short: '支' },
+    refund: { label: '退框', long: '退押金', kind: '', short: '退' }
   };
+
+  /* 付款方式 */
+  var PAY_METHODS = [
+    { id: 'cash', name: '现金' },
+    { id: 'wechat', name: '微信' },
+    { id: 'alipay', name: '支付宝' },
+    { id: 'credit', name: '赊账' }
+  ];
+
+  /* 压框：按个收押金，还框退钱 */
+  var BOX_MODES = [
+    { id: 'none', name: '不压框', price: 0 },
+    { id: '10', name: '10元框', price: 10 },
+    { id: '20', name: '20元框', price: 20 }
+  ];
+
+  function isWeightUnit(u) { return u === '斤' || u === '公斤'; }
+
+  /** 每行的计价方式：净重 / 毛重 / 按件 */
+  function modeOfUnit(unit) { return isWeightUnit(unit) ? 'net' : 'piece'; }
+
+  function boxModeInfo(id) {
+    for (var i = 0; i < BOX_MODES.length; i++) if (BOX_MODES[i].id === id) return BOX_MODES[i];
+    return BOX_MODES[0];
+  }
+
+  /** 一整单的框押金 */
+  function boxDeposit(rec) {
+    if (!rec) return 0;
+    // 有存下来的押金就用存的（按行记的框），老数据再从 框规格×框数 推算
+    if (rec.deposit != null && num(rec.deposit) > 0) return round2(num(rec.deposit));
+    return round2(boxModeInfo(rec.boxMode).price * num(rec.boxCount));
+  }
+
+  function payMethodName(id) {
+    for (var i = 0; i < PAY_METHODS.length; i++) if (PAY_METHODS[i].id === id) return PAY_METHODS[i].name;
+    return '';
+  }
+
+  var MODE_NAMES = { net: '净重', gross: '毛重', piece: '' };
 
   /* ---------------- 基础工具 ---------------- */
 
@@ -759,7 +875,7 @@ input, select { outline: none; }
   function emptyDB() {
     return {
       version: 1,
-      settings: { shopName: '我的水果批发', owner: '', phone: '', address: '', qr: '' },
+      settings: { shopName: '我的水果批发', owner: '', phone: '', address: '', qr: '', fontSize: 'md', theme: 'green' },
       customers: [],
       suppliers: [],
       products: [],
@@ -798,6 +914,7 @@ input, select { outline: none; }
         name: String(p.name),
         unit: p.unit || '斤',
         price: round2(num(p.price)),
+        note: p.note || '',
         lastUsedAt: p.lastUsedAt || 0
       });
     });
@@ -814,23 +931,54 @@ input, select { outline: none; }
       };
       if (r.type === 'sale' || r.type === 'purchase') {
         rec.items = (Array.isArray(r.items) ? r.items : []).map(function (it) {
+          var unit = it.unit || '斤';
+          var mode = (it.mode === 'net' || it.mode === 'gross' || it.mode === 'piece') ? it.mode : modeOfUnit(unit);
+          var tare = round2(num(it.tare));
+          var qtyIn = round2(num(it.qty));
+          // gross 是称出来的毛重；老数据没有 gross 时就当成 毛重 = 计价量 + 皮重
+          var gross = it.gross != null ? round2(num(it.gross)) : round2(qtyIn + tare);
+          var net = round2(Math.max(0, gross - tare));
+          // 计价数量：按毛重就用毛重，按净重就用净重，按件就用填的数量
+          var qty = mode === 'gross' ? gross : (mode === 'net' ? net : qtyIn);
           return {
             name: String(it.name || '').trim() || '未命名',
-            unit: it.unit || '斤',
-            qty: round2(num(it.qty)),
+            unit: unit,
+            mode: mode,
+            boxes: round2(num(it.boxes)),
+            boxPrice: round2(num(it.boxPrice)) || (num(it.boxes) ? 10 : 0),
+            gross: gross,
+            tare: tare,
+            net: net,
+            qty: qty,
             price: round2(num(it.price)),
-            amount: round2(num(it.amount) || num(it.qty) * num(it.price))
+            amount: round2(num(it.amount) || qty * num(it.price))
           };
         });
+        var sumItems = round2(rec.items.reduce(function (s, it) { return s + it.amount; }, 0));
+        rec.boxMode = boxModeInfo(r.boxMode).id;
+        var itemBoxes = 0;
+        rec.items.forEach(function (it) { itemBoxes += num(it.boxes); });
+        rec.boxCount = itemBoxes > 0 ? round2(itemBoxes) : round2(num(r.boxCount));
+        // deposit 是框押金，已经算进 total 里；goods 是纯货款
+        var itemDep = 0;
+        rec.items.forEach(function (it) { itemDep += num(it.boxPrice) * num(it.boxes); });
+        rec.deposit = r.deposit != null ? round2(num(r.deposit)) : (itemDep > 0 ? round2(itemDep) : boxDeposit(rec));
         rec.total = r.total != null
           ? round2(num(r.total))
-          : round2(rec.items.reduce(function (s, it) { return s + it.amount; }, 0));
+          : round2(sumItems + rec.deposit);
+        rec.goods = r.goods != null ? round2(num(r.goods)) : round2(rec.total - rec.deposit);
         rec.paid = r.paid != null ? round2(num(r.paid)) : rec.total;
+        rec.payMethod = payMethodName(r.payMethod) ? r.payMethod : '';
       } else if (r.type === 'receipt' || r.type === 'payment') {
         rec.amount = round2(num(r.amount));
+        rec.payMethod = payMethodName(r.payMethod) ? r.payMethod : '';
       } else if (r.type === 'expense') {
         rec.amount = round2(num(r.amount));
         rec.category = r.category || '其他';
+      } else if (r.type === 'refund') {
+        rec.amount = round2(num(r.amount));
+        rec.boxCount = round2(num(r.boxCount));
+        rec.boxPrice = round2(num(r.boxPrice));
       }
       out.records.push(rec);
     });
@@ -965,7 +1113,7 @@ input, select { outline: none; }
     var isCustomer = kind === 'customer';
     return db.records.filter(function (r) {
       if (r.partyId !== partyId) return false;
-      return isCustomer ? (r.type === 'sale' || r.type === 'receipt') : (r.type === 'purchase' || r.type === 'payment');
+      return isCustomer ? (r.type === 'sale' || r.type === 'receipt' || r.type === 'refund') : (r.type === 'purchase' || r.type === 'payment');
     });
   }
 
@@ -980,7 +1128,8 @@ input, select { outline: none; }
     var s = {
       sale: 0, purchase: 0, expense: 0,
       cashIn: 0, cashOut: 0,
-      saleCount: 0, purchaseCount: 0, expenseCount: 0, receiptCount: 0, paymentCount: 0,
+      saleCount: 0, purchaseCount: 0, expenseCount: 0, receiptCount: 0, paymentCount: 0, refundCount: 0,
+      refund: 0,
       creditSale: 0, creditPurchase: 0
     };
     db.records.forEach(function (r) {
@@ -997,6 +1146,9 @@ input, select { outline: none; }
         s.cashIn += num(r.amount); s.receiptCount++;
       } else if (r.type === 'payment') {
         s.cashOut += num(r.amount); s.paymentCount++;
+      } else if (r.type === 'refund') {
+        s.cashOut += num(r.amount); s.refund += num(r.amount); s.refundCount++;
+        s.sale -= num(r.amount);
       }
     });
     s.sale = round2(s.sale);
@@ -1115,6 +1267,7 @@ input, select { outline: none; }
     var rows = [];
     var balance = opening;
     all.forEach(function (r) {
+      if (r.type === 'refund') return;   // 退押金不进入对账单的应收变化
       if (r.date < (from || '')) return;
       if (to && r.date > to) return;
       var d = deltaOf(r);
@@ -1285,6 +1438,14 @@ input, select { outline: none; }
     UNITS: UNITS,
     EXPENSE_CATS: EXPENSE_CATS,
     TYPE_META: TYPE_META,
+    PAY_METHODS: PAY_METHODS,
+    BOX_MODES: BOX_MODES,
+    MODE_NAMES: MODE_NAMES,
+    isWeightUnit: isWeightUnit,
+    modeOfUnit: modeOfUnit,
+    boxModeInfo: boxModeInfo,
+    boxDeposit: boxDeposit,
+    payMethodName: payMethodName,
     uid: uid,
     num: num,
     round2: round2,
@@ -1346,6 +1507,33 @@ input, select { outline: none; }
       return false;
     }
   })();
+
+  /* 字号档位 / 主题配色 */
+  var FONTS = [
+    { id: 'sm', name: '小' },
+    { id: 'md', name: '标准' },
+    { id: 'lg', name: '大' },
+    { id: 'xl', name: '特大' }
+  ];
+  var THEMES = [
+    { id: 'green', name: '绿色', color: '#2f9c55' },
+    { id: 'orange', name: '橙色', color: '#e07b1a' },
+    { id: 'blue', name: '蓝色', color: '#2b7cc4' },
+    { id: 'red', name: '红色', color: '#cf4b42' },
+    { id: 'purple', name: '紫色', color: '#8a5cc0' }
+  ];
+  var THEME_COLORS = { green: '#1f7a3d', orange: '#b4530a', blue: '#1a558f', red: '#972c26', purple: '#5f3592' };
+
+  /** 把字号和主题挂到 <html> 上，全站立刻生效 */
+  function applyLook() {
+    var root = document.documentElement;
+    var fs = db.settings.fontSize || 'md';
+    var th = db.settings.theme || 'green';
+    root.setAttribute('data-fs', fs);
+    root.setAttribute('data-theme', th);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', THEME_COLORS[th] || '#1f7a3d');
+  }
 
   var ui = {
     tab: 'home',
@@ -1573,6 +1761,11 @@ input, select { outline: none; }
       if (debt > 0.004) debtTag = '<em class="tag-debt">欠 ' + money(debt) + '</em>';
       amt = money(r.total);
       cls = r.type === 'sale' ? 'pos' : 'warn';
+    } else if (r.type === 'refund') {
+      title = r.partyName || '退框';
+      sub = '退框押金' + (r.boxCount ? ' ' + S.fmtNum(r.boxCount) + '个' : '') + (r.note ? ' · ' + r.note : '');
+      amt = money(r.amount);
+      cls = 'neg';
     } else if (r.type === 'expense') {
       title = r.category || '支出';
       sub = r.note || '';
@@ -1626,7 +1819,7 @@ input, select { outline: none; }
     });
 
     var ranges = [['today', '今天'], ['week', '本周'], ['month', '本月'], ['lastMonth', '上月'], ['all', '全部']];
-    var types = [['all', '全部'], ['sale', '卖货'], ['purchase', '进货'], ['receipt', '收款'], ['payment', '付款'], ['expense', '支出']];
+    var types = [['all', '全部'], ['sale', '卖货'], ['purchase', '进货'], ['receipt', '收款'], ['payment', '付款'], ['expense', '支出'], ['refund', '退框']];
 
     var h = '<div class="filters">';
     h += '<div class="chips">' + ranges.map(function (x) {
@@ -1752,7 +1945,7 @@ input, select { outline: none; }
       '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px">' +
       '<span>赊出去 ' + money(st.creditSale) + '</span>' +
       '<span>欠供货商 ' + money(st.creditPurchase) + '</span>' +
-      '<span>毛利（未扣费用） ' + money(st.gross) + '</span>' +
+      '<span>退押金 ' + money(st.refund) + '</span>' +
       '</div></div>';
 
     if (series.length) {
@@ -1823,7 +2016,8 @@ input, select { outline: none; }
       '</div>';
 
     h += '<div class="list-group">' +
-      row2('gear', '店铺设置', '店名、老板电话', 'open-settings') +
+      row2('list', '货品库', '常卖的水果，开单点一下就填好', 'open-products') +
+      row2('gear', '店铺设置', '店名、地址、收款码', 'open-settings') +
       row2('download', '导出 Excel', 'CSV，电脑上直接打开', 'export-csv') +
       row2('upload', '导出备份文件', 'JSON，换手机/防丢失', 'export-json') +
       row2('doc', '导入备份', '从备份文件恢复', 'import-json') +
@@ -1856,16 +2050,19 @@ input, select { outline: none; }
 
   /* ================= 弹层基础 ================= */
 
-  function openSheet(opts) {
-    var root = $('#sheetRoot');
-    root.innerHTML =
-      '<div class="sheet-mask" data-act="close-sheet"></div>' +
+  function sheetMarkup(opts, closeAct) {
+    return '<div class="sheet-mask" data-act="' + closeAct + '"></div>' +
       '<div class="sheet" role="dialog" aria-modal="true">' +
         '<div class="sheet-head"><h2>' + esc(opts.title) + '</h2>' +
-          '<button class="icon-btn" data-act="close-sheet">' + icon('close') + '</button></div>' +
+          '<button class="icon-btn" data-act="' + closeAct + '">' + icon('close') + '</button></div>' +
         '<div class="sheet-body">' + opts.body + '</div>' +
         (opts.foot ? '<div class="sheet-foot">' + opts.foot + '</div>' : '') +
       '</div>';
+  }
+
+  function openSheet(opts) {
+    var root = $('#sheetRoot');
+    root.innerHTML = sheetMarkup(opts, 'close-sheet');
     root.classList.add('open');
     document.body.classList.add('no-scroll');
     if (opts.after) opts.after();
@@ -1875,9 +2072,27 @@ input, select { outline: none; }
     var root = $('#sheetRoot');
     root.classList.remove('open');
     root.innerHTML = '';
-    document.body.classList.remove('no-scroll');
+    if (!$('#sheetRoot2').classList.contains('open')) document.body.classList.remove('no-scroll');
     var cb = ui.onSheetClose;
     ui.onSheetClose = null;
+    if (cb) cb();
+  }
+
+  /* 第二层弹层：从表单里再开一层（选货、货品库），关掉后回到表单 */
+  function openSheet2(opts) {
+    var root = $('#sheetRoot2');
+    root.innerHTML = sheetMarkup(opts, 'close-sheet2');
+    root.classList.add('open');
+    if (opts.after) opts.after();
+  }
+
+  function closeSheet2() {
+    var root = $('#sheetRoot2');
+    root.classList.remove('open');
+    root.innerHTML = '';
+    if (!$('#sheetRoot').classList.contains('open')) document.body.classList.remove('no-scroll');
+    var cb = ui.onSheet2Close;
+    ui.onSheet2Close = null;
     if (cb) cb();
   }
 
@@ -1902,9 +2117,171 @@ input, select { outline: none; }
     });
   }
 
+  /* ================= 货品库 ================= */
+
+  /** 把某个货品填进明细（有空行就填空行，没有就新增一行） */
+  function addProductRow(pname) {
+    if (!pname) { openProductPicker(); return; }
+    var prod = null;
+    for (var i = 0; i < db.products.length; i++) if (db.products[i].name === pname) prod = db.products[i];
+
+    var target = null;
+    $$('#items .item-row').forEach(function (x) {
+      if (!$('.ir-name', x).value.trim()) target = x;
+    });
+    if (!target) {
+      var d = document.createElement('div');
+      d.innerHTML = itemRowHTML(blankItem());
+      $('#items').appendChild(d.firstChild);
+      target = $$('#items .item-row').pop();
+    }
+    if (!target) return;
+
+    $('.ir-name', target).value = pname;
+    if (prod) {
+      $('.ir-unit', target).value = prod.unit || '斤';
+      if (!$('.ir-price', target).value && prod.price) $('.ir-price', target).value = S.fmtNum(prod.price);
+    }
+    target = rebuildRow(target);
+    var focusEl = $('.ir-gross', target) || $('.ir-qty', target);
+    if (focusEl) focusEl.focus();
+    recalcEntry();
+  }
+
+  function openProductPicker() {
+    var list = db.products.slice().sort(function (a, b) {
+      if ((b.lastUsedAt || 0) !== (a.lastUsedAt || 0)) return (b.lastUsedAt || 0) - (a.lastUsedAt || 0);
+      return a.name < b.name ? -1 : 1;
+    });
+    var body = '';
+    if (!list.length) {
+      body = '<div class="empty" style="padding:26px 10px"><b>货品库还是空的</b>先把常卖的水果加进去，<br/>以后开单点一下就填好。</div>';
+    } else {
+      body = '<div class="pick-list">' + list.map(function (p) {
+        return '<button class="pick-item" data-act="pick-product" data-name="' + esc(p.name) + '">' +
+          '<b>' + esc(p.name) + '</b>' +
+          '<span>' + esc(p.unit || '斤') + (p.price ? ' · ¥' + S.fmtNum(p.price) : '') + '</span></button>';
+      }).join('') + '</div>';
+    }
+    openSheet2({
+      title: '选货',
+      body: body,
+      foot: '<button class="btn-ghost" data-act="open-products" style="flex:1">管理货品库</button>' +
+        '<button class="btn-primary" data-act="new-product" style="flex:1">＋ 新货品</button>'
+    });
+  }
+
+  function openProducts() {
+    var list = db.products.slice().sort(function (a, b) {
+      if ((b.lastUsedAt || 0) !== (a.lastUsedAt || 0)) return (b.lastUsedAt || 0) - (a.lastUsedAt || 0);
+      return a.name < b.name ? -1 : 1;
+    });
+    var body = '';
+    if (!list.length) {
+      body = '<div class="empty" style="padding:30px 10px"><b>还没有货品</b>点下面「新增货品」把常卖的水果存起来</div>';
+    } else {
+      body = '<div class="list">' + list.map(function (p) {
+        return '<div class="row" data-act="edit-product" data-id="' + p.id + '">' +
+          '<span class="badge b-sale">货</span>' +
+          '<div class="row-main">' +
+            '<div class="row-title"><span class="t">' + esc(p.name) + '</span></div>' +
+            '<div class="row-sub">' + esc(p.unit || '斤') + (p.price ? ' · 默认 ¥' + S.fmtNum(p.price) : '') +
+              (p.note ? ' · ' + esc(p.note) : '') + '</div>' +
+          '</div>' +
+          '<span class="chev">' + icon('arrow') + '</span></div>';
+      }).join('') + '</div>';
+    }
+    openSheet2({
+      title: '货品库（' + list.length + '）',
+      body: body,
+      foot: '<button class="btn-primary" data-act="new-product">＋ 新增货品</button>'
+    });
+  }
+
+  function openProductForm(id) {
+    var p = null;
+    for (var i = 0; i < db.products.length; i++) if (db.products[i].id === id) p = db.products[i];
+    var body = '<div class="form">' +
+      '<label class="field"><span>水果名称</span><input id="g-name" placeholder="如：砂糖橘" value="' + esc(p ? p.name : '') + '"></label>' +
+      '<div class="row-2">' +
+      '<label class="field"><span>单位</span><select id="g-unit">' + unitOptions(p ? p.unit : '斤') + '</select></label>' +
+      '<label class="field"><span>默认单价</span><input id="g-price" inputmode="decimal" placeholder="0" value="' + (p && p.price ? S.fmtNum(p.price) : '') + '"></label>' +
+      '</div>' +
+      '<label class="field"><span>备注</span><input id="g-note" placeholder="选填，如：山东红富士" value="' + esc(p ? p.note : '') + '"></label>' +
+      '<div class="tips" style="padding:0 2px">单位是「斤 / 公斤」时，开单可以选净重或毛重。</div>' +
+      '</div>';
+    openSheet2({
+      title: p ? '编辑货品' : '新增货品',
+      body: body,
+      foot: (p ? '<button class="btn-ghost sq danger" data-act="del-product" data-id="' + id + '">' + icon('trash') + '</button>' : '') +
+        '<button class="btn-primary" data-act="save-product" data-id="' + (id || '') + '">保存</button>',
+      after: function () { if (!p) $('#g-name').focus(); }
+    });
+  }
+
+  function saveProduct(id) {
+    var name = $('#g-name').value.trim();
+    if (!name) { toast('请填写水果名称'); return; }
+    var unit = $('#g-unit').value;
+    var price = S.round2(S.num($('#g-price').value));
+    var note = $('#g-note').value.trim();
+
+    var dup = db.products.filter(function (x) { return x.name === name && x.id !== id; });
+    if (dup.length) { toast('已经有同名货品了'); return; }
+
+    if (id) {
+      for (var i = 0; i < db.products.length; i++) {
+        if (db.products[i].id === id) {
+          db.products[i].name = name;
+          db.products[i].unit = unit;
+          db.products[i].price = price;
+          db.products[i].note = note;
+        }
+      }
+    } else {
+      db.products.push({ id: S.uid(), name: name, unit: unit, price: price, note: note, lastUsedAt: Date.now() });
+    }
+    S.saveStorage(db);
+    render(false);
+    toast('已保存');
+    openProducts();
+  }
+
+  function delProduct(id) {
+    confirmSheet2('删除这个货品？<br/><span style="font-size:13px;color:#8b968f">已经开出的单子不受影响</span>', '删除').then(function (ok) {
+      if (!ok) { openProducts(); return; }
+      db.products = db.products.filter(function (x) { return x.id !== id; });
+      S.saveStorage(db);
+      render(false);
+      toast('已删除');
+      openProducts();
+    });
+  }
+
+  function confirmSheet2(msg, okText) {
+    return new Promise(function (resolve) {
+      var settled = false;
+      function finish(v) {
+        if (settled) return;
+        settled = true;
+        ui.onSheet2Close = null;
+        closeSheet2();
+        resolve(v);
+      }
+      openSheet2({
+        title: '请确认',
+        body: '<div style="padding:18px 8px 26px;text-align:center;font-size:15px;line-height:1.7">' + msg + '</div>',
+        foot: '<button class="btn-ghost" data-act="close-sheet2" style="flex:1">取消</button>' +
+          '<button class="btn-primary" id="confirmOk2" style="flex:1">' + (okText || '确定') + '</button>'
+      });
+      ui.onSheet2Close = function () { finish(false); };
+      $('#confirmOk2').addEventListener('click', function () { finish(true); });
+    });
+  }
+
   /* ================= 记账表单 ================= */
 
-  function blankItem() { return { name: '', unit: '斤', qty: '', price: '' }; }
+  function blankItem() { return { name: '', unit: '斤', qty: '', gross: '', tare: '', price: '' }; }
 
   function unitOptions(cur) {
     var list = S.UNITS.slice();
@@ -1914,19 +2291,113 @@ input, select { outline: none; }
     }).join('');
   }
 
+  function modeOptions(mode, unit) {
+    if (!S.isWeightUnit(unit)) return '<option value="piece">按件</option>';
+    return '<option value="net"' + (mode === 'gross' ? '' : ' selected') + '>按净重</option>' +
+      '<option value="gross"' + (mode === 'gross' ? ' selected' : '') + '>按毛重</option>';
+  }
+
   function itemRowHTML(it) {
-    return '<div class="item-row">' +
-      '<div class="ir-line">' +
-        '<input class="ir-name" list="prodList" placeholder="水果名，如 砂糖橘" value="' + esc(it.name) + '">' +
-        '<button class="ir-del" data-act="del-item" aria-label="删除这一行">' + icon('close') + '</button>' +
-      '</div>' +
-      '<div class="ir-grid">' +
-        '<label class="ir-cell"><span>数量</span><input class="ir-qty" inputmode="decimal" placeholder="0" value="' + esc(it.qty) + '"></label>' +
-        '<label class="ir-cell"><span>单位</span><select class="ir-unit">' + unitOptions(it.unit) + '</select></label>' +
+    var unit = it.unit || '斤';
+    var mode = it.mode || S.modeOfUnit(unit);
+    var isW = S.isWeightUnit(unit);
+
+    var head = '<div class="ir-line">' +
+      '<input class="ir-name" list="prodList" placeholder="水果名，如 砂糖橘" value="' + esc(it.name) + '">' +
+      '<select class="ir-unit">' + unitOptions(unit) + '</select>' +
+      (isW ? '<select class="ir-mode">' + modeOptions(mode, unit) + '</select>' : '') +
+      '<button class="ir-del" data-act="del-item" aria-label="删除这一行">' + icon('close') + '</button>' +
+      '</div>';
+
+    var grid;
+    if (isW) {
+      var grossV = it.gross != null ? it.gross : (it.qty != null ? it.qty : '');
+      var tareV = it.tare != null ? it.tare : '';
+      var net = (grossV !== '' && grossV != null) ? S.round2(Math.max(0, S.num(grossV) - S.num(tareV))) : 0;
+      grid = '<div class="ir-grid ir-grid-5">' +
+        '<label class="ir-cell"><span>毛重</span><input class="ir-gross" inputmode="decimal" placeholder="0" value="' + esc(grossV) + '"></label>' +
+        '<label class="ir-cell"><span>皮重</span><input class="ir-tare" inputmode="decimal" placeholder="0" value="' + esc(tareV) + '"></label>' +
+        '<div class="ir-cell"><span>净重</span><div class="ir-net">' + S.fmtNum(net) + '</div></div>' +
         '<label class="ir-cell"><span>单价</span><input class="ir-price" inputmode="decimal" placeholder="0" value="' + esc(it.price) + '"></label>' +
         '<div class="ir-amt"><span>金额</span><b>¥0</b></div>' +
-      '</div>' +
+        '</div>' +
+        boxLineHTML(it);
+    } else {
+      grid = '<div class="ir-grid">' +
+        '<label class="ir-cell"><span>数量</span><input class="ir-qty" inputmode="decimal" placeholder="0" value="' + esc(it.qty) + '"></label>' +
+        '<label class="ir-cell"><span>单价</span><input class="ir-price" inputmode="decimal" placeholder="0" value="' + esc(it.price) + '"></label>' +
+        '<div class="ir-amt"><span>金额</span><b>¥0</b></div>' +
+        '</div>' +
+        boxLineHTML(it);
+    }
+    return '<div class="item-row">' + head + grid + '</div>';
+  }
+
+  /** 每行的「压框」小行：框数 × 框规格（10 元 / 20 元） */
+  function boxLineHTML(it) {
+    var boxes = it.boxes != null && it.boxes !== 0 ? it.boxes : '';
+    var price = it.boxPrice || 10;
+    return '<div class="ir-box">' +
+      '<span>压框</span>' +
+      '<input class="ir-boxcnt" inputmode="decimal" placeholder="0" value="' + esc(boxes) + '">' +
+      '<span>个</span>' +
+      '<select class="ir-boxprice">' +
+        '<option value="10"' + (price === 10 ? ' selected' : '') + '>10元框</option>' +
+        '<option value="20"' + (price === 20 ? ' selected' : '') + '>20元框</option>' +
+      '</select>' +
+      '<b class="ir-boxdep"></b>' +
       '</div>';
+  }
+
+  /** 读出一行的数值：毛重、皮重、净重、计价数量、金额 */
+  function rowValues(row) {
+    var unit = $('.ir-unit', row).value;
+    var modeEl = $('.ir-mode', row);
+    var mode = modeEl ? modeEl.value : S.modeOfUnit(unit);
+    var price = S.num($('.ir-price', row).value);
+    var gross = 0, tare = 0, qty = 0;
+
+    if (S.isWeightUnit(unit)) {
+      var g = $('.ir-gross', row);
+      var t = $('.ir-tare', row);
+      gross = g ? S.num(g.value) : 0;
+      tare = t ? S.num(t.value) : 0;
+      var net = Math.max(0, S.round2(gross - tare));
+      qty = mode === 'gross' ? gross : net;
+    } else {
+      var q = $('.ir-qty', row);
+      qty = q ? S.num(q.value) : 0;
+      gross = qty;
+    }
+    gross = S.round2(gross);
+    tare = S.round2(tare);
+    qty = S.round2(qty);
+    var boxEl = $('.ir-boxcnt', row);
+    var boxSel = $('.ir-boxprice', row);
+    var boxes = boxEl ? S.num(boxEl.value) : 0;
+    var boxPrice = boxSel ? S.num(boxSel.value) : 0;
+    return {
+      unit: unit, mode: mode,
+      gross: gross, tare: tare, net: S.round2(Math.max(0, gross - tare)),
+      qty: qty, price: price, amount: S.round2(qty * price),
+      boxes: S.round2(boxes), boxPrice: boxPrice,
+      deposit: S.round2(boxes * boxPrice)
+    };
+  }
+
+  /** 换了单位（斤 ↔ 箱），整行要重画：毛重皮重 ↔ 数量 */
+  function rebuildRow(row) {
+    var v = rowValues(row);
+    var it = {
+      name: $('.ir-name', row).value,
+      unit: v.unit, mode: v.mode,
+      gross: v.gross, tare: v.tare, qty: v.qty, price: v.price
+    };
+    var tmp = document.createElement('div');
+    tmp.innerHTML = itemRowHTML(it);
+    var newRow = tmp.firstChild;
+    if (row.parentNode) row.parentNode.replaceChild(newRow, row);
+    return newRow;
   }
 
   function productChipsHTML() {
@@ -1964,6 +2435,8 @@ input, select { outline: none; }
     var parties = kind === 'customer' ? db.customers : db.suppliers;
     var items = rec ? clone(rec.items) : [blankItem()];
     var body = '';
+    ui.draftPay = rec && rec.payMethod ? rec.payMethod : '';
+    ui.draftBox = rec && rec.boxMode ? rec.boxMode : 'none';
 
     body += '<div class="form">';
     body += '<div class="row-2">' +
@@ -1979,14 +2452,20 @@ input, select { outline: none; }
     body += stripHTML(isSale ? '常来的客户' : '常来的供货商', partyChipsHTML(kind, 'f-party'));
 
     body += '<div class="field-block">' +
-      '<div class="block-head"><span>商品明细</span><button class="mini-btn" data-act="add-item">＋ 加一行</button></div>' +
+      '<div class="block-head"><span>商品明细</span>' +
+        '<span style="display:flex;gap:14px">' +
+          '<button class="mini-btn" data-act="open-product-picker">＋ 选货</button>' +
+          '<button class="mini-btn" data-act="add-item">＋ 手填</button>' +
+        '</span></div>' +
       '<div id="items">' + items.map(itemRowHTML).join('') + '</div>' +
       '</div>';
 
-    body += stripHTML('常卖的水果', productChipsHTML());
+    body += stripHTML('常卖的', productChipsHTML());
 
     body += '<div class="sum-card">' +
-      '<div class="sum-line"><span>合计</span><b id="f-total">¥0</b></div>' +
+      '<div class="sum-line"><span>货款</span><b id="f-goods" style="font-size:17px">¥0</b></div>' +
+      '<div class="sum-line" id="f-deprow" style="display:none"><span id="f-depdesc">框押金</span><b id="f-dep" style="font-size:17px">¥0</b></div>' +
+      '<div class="sum-line"><span>成交合计</span><b id="f-total">¥0</b></div>' +
       '<div class="sum-line"><span>本次' + (isSale ? '收款' : '付款') + '</span>' +
         '<input id="f-paid" inputmode="decimal" placeholder="' + (isSale ? '不填=全款' : '不填=全付') + '"></div>' +
       '<div class="pay-actions">' +
@@ -1995,6 +2474,14 @@ input, select { outline: none; }
       '</div>' +
       '<div class="sum-line debt-line"><span>' + (isSale ? '客户欠' : '我欠他') + '</span><b id="f-debt">¥0</b></div>' +
       '</div>';
+
+    /* 付款方式 */
+    body += '<div class="field-block"><div class="block-head"><span>付款方式</span></div>' +
+      '<div class="chips" id="f-pay">' +
+        S.PAY_METHODS.map(function (m) {
+          return '<button class="chip' + (ui.draftPay === m.id ? ' active' : '') + '" data-act="pick-pay" data-v="' + m.id + '">' + m.name + '</button>';
+        }).join('') +
+      '</div></div>';
 
     body += '<label class="field"><span>备注</span><input id="f-note" placeholder="选填，如：早上送货、微信转" value="' + esc(rec ? rec.note : '') + '"></label>';
     body += '</div>';
@@ -2009,8 +2496,8 @@ input, select { outline: none; }
       body: body,
       foot: foot,
       after: function () {
-        if (rec && rec.paid !== rec.total) {
-          $('#f-paid').value = S.fmtNum(rec.paid);
+        if (rec) {
+          if (rec.paid !== rec.total) $('#f-paid').value = S.fmtNum(rec.paid);
         }
         recalcEntry();
         if (!rec) $('#f-party').focus();
@@ -2019,27 +2506,75 @@ input, select { outline: none; }
     ui.entryType = type;
   }
 
+  /** 货款 = 各行数量×单价 之和 */
+  function formGoods() {
+    var tot = 0;
+    $$('#items .item-row').forEach(function (r2) {
+      tot += rowValues(r2).amount;
+    });
+    return S.round2(tot);
+  }
+
+  /** 框押金 = 押金单价 × 框数（压框时计入本单金额） */
+  function formDeposit() {
+    var tot = 0;
+    $$('#items .item-row').forEach(function (r2) {
+      tot += rowValues(r2).deposit;
+    });
+    return S.round2(tot);
+  }
+
+  /** 成交合计 = 货款 + 框押金 */
+  function formTotal() { return S.round2(formGoods() + formDeposit()); }
+
   function recalcEntry() {
     var sheet = $('#sheetRoot');
-    var total = 0;
+    var goods = 0;
     $$('#items .item-row', sheet).forEach(function (row) {
-      var q = S.num($('.ir-qty', row).value);
-      var p = S.num($('.ir-price', row).value);
-      var a = S.round2(q * p);
-      $('.ir-amt b', row).textContent = money(a);
-      total += a;
+      var v = rowValues(row);
+      var netEl = $('.ir-net', row);
+      if (netEl) netEl.textContent = S.fmtNum(v.net);
+      var amtEl = $('.ir-amt b', row);
+      if (amtEl) amtEl.textContent = money(v.amount);
+      goods += v.amount;
     });
-    total = S.round2(total);
-    var totalEl = $('#f-total', sheet);
-    if (!totalEl) return;
-    totalEl.textContent = money(total);
+    goods = S.round2(goods);
+
+    var goodsEl = $('#f-goods', sheet);
+    if (!goodsEl) return;
+    goodsEl.textContent = money(goods);
+
+    $$('#items .item-row', sheet).forEach(function (row) {
+      var v = rowValues(row);
+      var depEl = $('.ir-boxdep', row);
+      if (depEl) depEl.textContent = v.deposit > 0 ? money(v.deposit) : '';
+    });
+
+    var dep = formDeposit();
+    var depRow = $('#f-deprow', sheet);
+    if (depRow) {
+      depRow.style.display = dep > 0 ? 'flex' : 'none';
+      if (dep > 0) {
+        $('#f-dep', sheet).textContent = money(dep);
+        $('#f-depdesc', sheet).textContent = '框押金合计';
+      }
+    }
+
+    var total = S.round2(goods + dep);
+    $('#f-total', sheet).textContent = money(total);
 
     var paidInput = $('#f-paid', sheet);
-    var raw = paidInput.value.trim();
+    var raw = paidInput ? paidInput.value.trim() : '';
     var paid = raw === '' ? total : S.num(raw);
     var debt = S.round2(total - paid);
-    $('#f-debt', sheet).textContent = money(debt);
-    $('#f-debt', sheet).className = debt > 0 ? 'neg' : 'pos';
+    var debtEl = $('#f-debt', sheet);
+    if (debtEl) {
+      debtEl.textContent = money(debt);
+      debtEl.className = debt > 0 ? 'neg' : 'pos';
+    }
+
+    var hint = $('#f-boxdep', sheet);
+    if (hint) hint.textContent = '押金 ' + money(dep) + '，计入本单金额';
   }
 
   function readEntryForm() {
@@ -2049,21 +2584,22 @@ input, select { outline: none; }
     var items = [];
     $$('#items .item-row', sheet).forEach(function (row) {
       var name = $('.ir-name', row).value.trim();
-      var unit = $('.ir-unit', row).value;
-      var qty = S.num($('.ir-qty', row).value);
-      var price = S.num($('.ir-price', row).value);
-      if (!name && !qty && !price) return;
-      items.push({ name: name || '未命名', unit: unit, qty: qty, price: price, amount: S.round2(qty * price) });
+      var v = rowValues(row);
+      if (!name && !v.qty && !v.gross && !v.price) return;
+      items.push({
+        name: name || '未命名', unit: v.unit, mode: v.mode,
+        gross: v.gross, tare: v.tare, net: v.net,
+        qty: v.qty, price: v.price, amount: v.amount,
+        boxes: v.boxes, boxPrice: v.boxPrice
+      });
     });
-    var total = S.round2(items.reduce(function (s, it) { return s + it.amount; }, 0));
-    var raw = $('#f-paid', sheet).value.trim();
-    var paid = raw === '' ? total : S.round2(S.num(raw));
+    var goods = S.round2(items.reduce(function (s, it) { return s + it.amount; }, 0));
     return {
       date: date,
       partyName: partyName,
       items: items,
-      total: total,
-      paid: paid,
+      goods: goods,
+      paidRaw: $('#f-paid', sheet).value.trim(),
       note: $('#f-note', sheet).value.trim()
     };
   }
@@ -2094,7 +2630,12 @@ input, select { outline: none; }
   function saveEntry(type, editId, wantBill) {
     var payload = readEntryForm();
     if (!payload.items.length) { toast('请先填写水果名和数量'); return null; }
-    if (payload.total <= 0) { toast('金额是 0，检查一下数量和单价'); return null; }
+
+    var dep = formDeposit();
+    var goods = payload.goods;
+    var total = S.round2(goods + dep);
+    if (total <= 0) { toast('金额是 0，检查一下数量和单价'); return null; }
+    var paid = payload.paidRaw === '' ? total : S.round2(S.num(payload.paidRaw));
 
     var isSale = type === 'sale';
     var party = resolveParty(isSale ? 'customer' : 'supplier', payload.partyName);
@@ -2105,8 +2646,13 @@ input, select { outline: none; }
       partyId: party.id,
       partyName: party.name,
       items: payload.items,
-      total: payload.total,
-      paid: payload.paid,
+      goods: goods,
+      deposit: dep,
+      total: total,
+      paid: paid,
+      payMethod: ui.draftPay || '',
+      boxMode: 'none',
+      boxCount: payload.items.reduce(function (sum, it) { return sum + (it.boxes || 0); }, 0),
       note: payload.note,
       createdAt: Date.now()
     };
@@ -2124,7 +2670,7 @@ input, select { outline: none; }
     payload.items.forEach(upsertProduct);
     commit();
     closeSheet();
-    toast((editId ? '已修改 ' : '已记上 ') + money(payload.total) + (payload.total - payload.paid > 0.004 ? '，欠 ' + money(payload.total - payload.paid) : ''));
+    toast((editId ? '已修改 ' : '已记上 ') + money(total) + (total - paid > 0.004 ? '，欠 ' + money(total - paid) : ''));
     if (wantBill) {
       var rid = rec.id;
       setTimeout(function () { openBill(rid); }, 180);
@@ -2282,12 +2828,18 @@ input, select { outline: none; }
     body += '<div class="card">';
     if (r.type === 'sale' || r.type === 'purchase') {
       (r.items || []).forEach(function (it) {
-        body += '<div class="kv"><span>' + esc(it.name) + '　' + S.fmtNum(it.qty) + it.unit + ' × ¥' + S.fmtNum(it.price) + '</span><b>' + money(it.amount) + '</b></div>';
+        var mw = it.mode === 'gross' ? '毛重' : (it.mode === 'net' ? '净重' : '');
+        var wTxt = (it.tare > 0)
+          ? '毛' + S.fmtNum(it.gross) + ' 皮' + S.fmtNum(it.tare) + ' 净' + S.fmtNum(it.net) + it.unit
+          : mw + S.fmtNum(it.qty) + it.unit;
+        body += '<div class="kv"><span>' + esc(it.name) + '　' + wTxt + ' × ¥' + S.fmtNum(it.price) + '</span><b>' + money(it.amount) + '</b></div>';
       });
       body += '<div class="kv"><span>合计</span><b>' + money(r.total) + '</b></div>';
       body += '<div class="kv"><span>' + (r.type === 'sale' ? '已收' : '已付') + '</span><b>' + money(r.paid) + '</b></div>';
       var debt = S.round2(r.total - r.paid);
       body += '<div class="kv"><span>' + (r.type === 'sale' ? '客户还欠' : '还欠对方') + '</span><b class="' + (debt > 0 ? 'neg' : 'pos') + '">' + money(debt) + '</b></div>';
+      if (r.payMethod) body += '<div class="kv"><span>付款方式</span><b>' + esc(S.payMethodName(r.payMethod)) + '</b></div>';
+      if (S.boxDeposit(r) > 0) body += '<div class="kv"><span>框押金（还框退）</span><b>' + S.fmtNum(r.boxCount) + '个 = ' + money(S.boxDeposit(r)) + '</b></div>';
     } else if (r.type === 'expense') {
       body += '<div class="kv"><span>类别</span><b>' + esc(r.category) + '</b></div>';
       body += '<div class="kv"><span>金额</span><b>' + money(r.amount) + '</b></div>';
@@ -2333,6 +2885,7 @@ input, select { outline: none; }
     body += '<div class="detail-actions">' +
       '<button class="primary" data-act="new-settle" data-kind="' + kind + '" data-id="' + id + '">' + (isC ? '记一笔收款' : '记一笔付款') + '</button>' +
       '<button data-act="open-stmt" data-kind="' + kind + '" data-id="' + id + '">对账单</button>' +
+      (isC ? '<button data-act="new-refund" data-id="' + id + '" style="grid-column:1/-1">退框 · 退押金</button>' : '') +
       '</div>';
 
     body += '<div class="card" style="padding:4px 14px">' +
@@ -2530,7 +3083,10 @@ input, select { outline: none; }
     lines.push('日期：' + rec.date);
     lines.push('');
     (rec.items || []).forEach(function (it) {
-      lines.push(it.name + '  ' + S.fmtNum(it.qty) + it.unit + ' × ' + S.fmtNum(it.price) + ' = ' + S.fmtNum(it.amount));
+      var w = (it.tare > 0)
+        ? ('毛' + S.fmtNum(it.gross) + '皮' + S.fmtNum(it.tare) + '净' + S.fmtNum(it.net) + it.unit)
+        : (S.fmtNum(it.qty) + it.unit);
+      lines.push(it.name + '  ' + w + ' × ' + S.fmtNum(it.price) + ' = ' + S.fmtNum(it.amount));
     });
     lines.push('');
     lines.push('合计：' + S.fmtNum(rec.total) + ' 元');
@@ -2635,12 +3191,21 @@ input, select { outline: none; }
       ctx.fillText(String(i + 1), PAD + 12, y);
 
       var name = String(it.name);
-      while (ctx.measureText(name).width > 280 && name.length > 2) name = name.slice(0, -1);
+      while (ctx.measureText(name).width > 205 && name.length > 2) name = name.slice(0, -1);
       if (name !== String(it.name)) name = name.slice(0, -1) + '…';
       ctx.fillText(name, PAD + 56, y);
 
+      if (it.tare > 0) {
+        ctx.fillStyle = LIGHT;
+        setFont(ctx, 15, 'normal');
+        ctx.fillText('毛' + S.fmtNum(it.gross) + ' 皮' + S.fmtNum(it.tare) + it.unit, PAD + 56, y + 17);
+        ctx.fillStyle = BLACK;
+        setFont(ctx, 21, 'normal');
+      }
+
       ctx.textAlign = 'right';
-      ctx.fillText(S.fmtNum(it.qty) + it.unit, COL_QTY, y);
+      var modeWord = it.mode === 'gross' ? '毛' : (it.mode === 'net' ? '净' : '');
+      ctx.fillText(modeWord + S.fmtNum(it.qty) + it.unit, COL_QTY, y);
       ctx.fillText(S.fmtNum(it.price), COL_PRICE, y);
       ctx.fillText(S.fmtNum(it.amount), COL_AMT, y);
       ctx.textAlign = 'left';
@@ -2678,7 +3243,8 @@ input, select { outline: none; }
     y += 44;
     ctx.fillStyle = GRAY;
     setFont(ctx, 21, 'normal');
-    var payWord = rec.paid >= rec.total - 0.004 ? '现结' : (rec.paid > 0.004 ? '部分现结' : '赊账');
+    var payName = S.payMethodName(rec.payMethod);
+    var payWord = payName || (rec.paid >= rec.total - 0.004 ? '现结' : (rec.paid > 0.004 ? '部分现结' : '赊账'));
     ctx.fillText('（付款方式：' + payWord + '）', R - 8, y);
     ctx.textAlign = 'left';
 
@@ -2701,6 +3267,21 @@ input, select { outline: none; }
       ctx.fillStyle = BLACK;
       setFont(ctx, 36, 'bold');
       ctx.fillText('总欠款：' + S.fmtNum(totalDebt) + '元', R - 8, y);
+      ctx.textAlign = 'left';
+    }
+
+    /* 框押金 */
+    var dep = S.boxDeposit(rec);
+    if (dep > 0) {
+      y += 48;
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#555555';
+      setFont(ctx, 21, 'normal');
+      ctx.fillText('其中框押金：' + S.fmtNum(dep) + '元（' + S.fmtNum(rec.boxCount) + '个框）', R - 8, y);
+      y += 30;
+      ctx.fillStyle = '#8a8a8a';
+      setFont(ctx, 17, 'normal');
+      ctx.fillText('（还框退押金）', R - 8, y);
       ctx.textAlign = 'left';
     }
 
@@ -2866,6 +3447,70 @@ input, select { outline: none; }
     }
   }
 
+  /* ================= 退框退押金 ================= */
+
+  function openRefund(partyId) {
+    var p = partyId ? S.findParty(db, 'customer', partyId) : null;
+    var body = '<div class="form">' +
+      '<div class="row-2">' +
+      '<label class="field"><span>日期</span><input id="r-date" type="date" value="' + S.today() + '"></label>' +
+      '<label class="field"><span>客户</span><input id="r-party" list="partyList" placeholder="输入或选择" value="' + esc(p ? p.name : '') + '"></label>' +
+      '</div>' +
+      '<div class="row-2">' +
+      '<label class="field"><span>还回来几个框</span><input id="r-count" inputmode="decimal" placeholder="0"></label>' +
+      '<label class="field"><span>框规格</span><select id="r-price"><option value="10">10元框</option><option value="20">20元框</option></select></label>' +
+      '</div>' +
+      '<div class="sum-card">' +
+      '<div class="sum-line"><span>退给客户</span><b id="r-amount">¥0</b></div>' +
+      '<div class="sum-line" style="font-size:12px;color:var(--muted)"><span>退的是当初收的押金，</span><span>不影响客户欠款</span></div>' +
+      '</div>' +
+      '<label class="field"><span>备注</span><input id="r-note" placeholder="选填，如：现金退、微信退"></label>' +
+      '</div>';
+
+    openSheet({
+      title: '退框 · 退押金',
+      body: body,
+      foot: '<button class="btn-primary" data-act="save-refund">保存</button>',
+      after: function () {
+        recalcRefund();
+        $('#r-count').focus();
+      }
+    });
+  }
+
+  function recalcRefund() {
+    var cnt = S.num($('#r-count') ? $('#r-count').value : 0);
+    var price = S.num($('#r-price') ? $('#r-price').value : 0);
+    var el = $('#r-amount');
+    if (el) el.textContent = money(S.round2(cnt * price));
+  }
+
+  function saveRefund() {
+    var partyName = $('#r-party').value.trim();
+    var cnt = S.num($('#r-count').value);
+    var price = S.num($('#r-price').value);
+    var amount = S.round2(cnt * price);
+    if (!partyName) { toast('请选择客户'); return; }
+    if (amount <= 0) { toast('框数要大于 0'); return; }
+
+    var party = resolveParty('customer', partyName);
+    db.records.push({
+      id: S.uid(),
+      type: 'refund',
+      date: $('#r-date').value || S.today(),
+      partyId: party.id,
+      partyName: party.name,
+      amount: amount,
+      boxCount: cnt,
+      boxPrice: price,
+      note: $('#r-note').value.trim(),
+      createdAt: Date.now()
+    });
+    commit();
+    closeSheet();
+    toast('已记录退框 ' + money(amount));
+  }
+
   /* ================= 设置 ================= */
 
   function qrBoxHTML() {
@@ -2890,6 +3535,22 @@ input, select { outline: none; }
         '<button class="mini-btn" data-act="pick-qr">' + (db.settings.qr ? '重新上传' : '上传') + '</button></div>' +
         '<div id="qrBox">' + qrBoxHTML() + '</div>' +
       '</div>' +
+      '<div class="field-block"><div class="block-head"><span>字号（看不清就调大）</span></div>' +
+        '<div class="chips" id="set-fs">' +
+          FONTS.map(function (f) {
+            return '<button class="chip' + ((db.settings.fontSize || 'md') === f.id ? ' active' : '') +
+              '" data-act="pick-fs" data-v="' + f.id + '">' + f.name + '</button>';
+          }).join('') +
+        '</div></div>' +
+      '<div class="field-block"><div class="block-head"><span>主题颜色</span></div>' +
+        '<div class="chips" id="set-theme">' +
+          THEMES.map(function (t) {
+            return '<button class="chip' + ((db.settings.theme || 'green') === t.id ? ' active' : '') +
+              '" data-act="pick-theme" data-v="' + t.id + '">' +
+              '<span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:' + t.color +
+              ';margin-right:5px;vertical-align:-1px"></span>' + t.name + '</button>';
+          }).join('') +
+        '</div></div>' +
       '<div class="tips" style="padding:4px 2px 0">店名、地址、收款码都会出现在开出来的账单上。</div>' +
       '</div>';
     openSheet({
@@ -2905,6 +3566,7 @@ input, select { outline: none; }
     db.settings.phone = $('#set-phone').value.trim();
     if ($('#set-addr')) db.settings.address = $('#set-addr').value.trim();
     S.saveStorage(db);
+    applyLook();
     render(false);
     closeSheet();
     toast('已保存');
@@ -2961,6 +3623,13 @@ input, select { outline: none; }
       case 'tab': go(el.getAttribute('data-tab')); break;
       case 'go-parties': go('parties'); break;
       case 'close-sheet': closeSheet(); break;
+      case 'close-sheet2': closeSheet2(); break;
+      case 'open-product-picker': openProductPicker(); break;
+      case 'open-products': openProducts(); break;
+      case 'new-product': openProductForm(null); break;
+      case 'edit-product': openProductForm(id); break;
+      case 'save-product': saveProduct(id || null); break;
+      case 'del-product': delProduct(id); break;
 
       case 'quick-add':
         openSheet({
@@ -2982,6 +3651,8 @@ input, select { outline: none; }
       case 'new-payment': closeSheet(); setTimeout(function () { openSettle('supplier'); }, 60); break;
       case 'new-expense': closeSheet(); setTimeout(function () { openExpense(); }, 60); break;
       case 'new-settle': openSettle(kind, id); break;
+      case 'new-refund': openRefund(id); break;
+      case 'save-refund': saveRefund(); break;
 
       case 'add-item':
         var box = $('#items');
@@ -3001,25 +3672,18 @@ input, select { outline: none; }
         break;
 
       case 'pick-product':
-        var pname = el.getAttribute('data-name');
-        var prod = null;
-        db.products.forEach(function (p) { if (p.name === pname) prod = p; });
-        var target = null;
-        $$('#items .item-row').forEach(function (x) {
-          if (!$('.ir-name', x).value.trim()) target = x;
-        });
-        if (!target) {
-          var d2 = document.createElement('div');
-          d2.innerHTML = itemRowHTML(blankItem());
-          $('#items').appendChild(d2.firstChild);
-          target = $$('#items .item-row').pop();
+        addProductRow(el.getAttribute('data-name'));
+        if ($('#sheetRoot2').classList.contains('open')) closeSheet2();
+        break;
+
+      case 'pick-pay':
+        ui.draftPay = el.getAttribute('data-v');
+        $$('#f-pay .chip').forEach(function (c) { c.classList.toggle('active', c === el); });
+        if (ui.draftPay === 'credit') {
+          $('#f-paid').value = '0';
+        } else if (!$('#f-paid').value.trim() || S.num($('#f-paid').value) <= 0) {
+          $('#f-paid').value = S.fmtNum(formTotal());
         }
-        $('.ir-name', target).value = pname;
-        if (prod) {
-          $('.ir-unit', target).value = prod.unit || '斤';
-          if (!$('.ir-price', target).value && prod.price) $('.ir-price', target).value = S.fmtNum(prod.price);
-        }
-        $('.ir-qty', target).focus();
         recalcEntry();
         break;
 
@@ -3033,11 +3697,7 @@ input, select { outline: none; }
         break;
 
       case 'pay-all':
-        var tot = 0;
-        $$('#items .item-row').forEach(function (r2) {
-          tot += S.round2(S.num($('.ir-qty', r2).value) * S.num($('.ir-price', r2).value));
-        });
-        $('#f-paid').value = S.fmtNum(S.round2(tot));
+        $('#f-paid').value = S.fmtNum(formTotal());
         recalcEntry();
         break;
 
@@ -3083,6 +3743,20 @@ input, select { outline: none; }
         break;
       case 'save-settings':
         saveSettings();
+        break;
+
+      case 'pick-fs':
+        db.settings.fontSize = el.getAttribute('data-v');
+        S.saveStorage(db);
+        applyLook();
+        $$('#set-fs .chip').forEach(function (c) { c.classList.toggle('active', c === el); });
+        break;
+
+      case 'pick-theme':
+        db.settings.theme = el.getAttribute('data-v');
+        S.saveStorage(db);
+        applyLook();
+        $$('#set-theme .chip').forEach(function (c) { c.classList.toggle('active', c === el); });
         break;
 
       case 'bill-range': ui.billRange = el.getAttribute('data-v'); render(false); break;
@@ -3149,12 +3823,15 @@ input, select { outline: none; }
     var t = e.target;
     if (!t || !t.classList) return;
     if (t.id === 's-party') { updateSettleBalance(); return; }
-    if (t.classList.contains('ir-qty') || t.classList.contains('ir-price') || t.id === 'f-paid') {
+    if (t.id === 'r-count') { recalcRefund(); return; }
+    if (t.classList.contains('ir-qty') || t.classList.contains('ir-gross') ||
+        t.classList.contains('ir-tare') || t.classList.contains('ir-price') || t.classList.contains('ir-boxcnt') ||
+        t.id === 'f-paid' || t.id === 'f-boxcount') {
       recalcEntry();
     }
   });
 
-  /* 选中常用水果后自动带出单位、单价 */
+  /* 选中常用水果后自动带出单位、单价；换单位要改「重量/数量」和净重毛重 */
   document.addEventListener('change', function (e) {
     var t = e.target;
     if (!t || !t.classList) return;
@@ -3164,6 +3841,12 @@ input, select { outline: none; }
       return;
     }
     if (t.id === 's-party') { updateSettleBalance(); return; }
+    if (t.classList.contains('ir-boxprice')) { recalcEntry(); return; }
+    if (t.classList.contains('ir-unit')) {
+      var urow = t.closest('.item-row');
+      if (urow) { rebuildRow(urow); recalcEntry(); }
+      return;
+    }
     if (!t.classList.contains('ir-name')) return;
     var name = t.value.trim();
     if (!name) return;
@@ -3173,6 +3856,7 @@ input, select { outline: none; }
       if (p.unit) $('.ir-unit', row).value = p.unit;
       if (p.price && !$('.ir-price', row).value) $('.ir-price', row).value = S.fmtNum(p.price);
     });
+    rebuildRow(row);
     recalcEntry();
   });
 
@@ -3239,6 +3923,7 @@ input, select { outline: none; }
     } catch (e) { /* ignore */ }
   })();
 
+  applyLook();
   render(true);
 
   /* 放到网上（https）时注册离线缓存：装了之后没信号也能打开 */
@@ -3263,7 +3948,9 @@ input, select { outline: none; }
     openRecord: openRecord,
     openSettings: openSettings,
     openBill: openBill,
-    billText: billText
+    billText: billText,
+    openRefund: openRefund,
+    openProducts: openProducts
   };
 })();
 
